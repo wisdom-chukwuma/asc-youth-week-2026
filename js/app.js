@@ -8,6 +8,13 @@ import { initEngage } from "./engage.js";
 import { initBoard } from "./board.js";
 import { initWall } from "./wall.js";
 import { shareDayCard } from "./card.js";
+import { initNotifications } from "./notifications.js";
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => { /* offline shell + push just won't be available */ });
+  });
+}
 
 const el = {};
 
@@ -297,6 +304,7 @@ async function main() {
   initEngage();
   initBoard();
   initWall();
+  initNotifications();
 
   onProfileChange(() => { renderMeChip(); renderSchedule(); updateCheckinButton(); });
   renderSchedule();

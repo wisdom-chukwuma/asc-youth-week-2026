@@ -40,11 +40,25 @@ import {
   uploadBytes,
   getDownloadURL
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
+import {
+  getMessaging,
+  getToken as getMessagingToken,
+  isSupported as messagingIsSupported
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging.js";
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
+
+// Push notifications aren't available in every browser (no Safari <16.4,
+// no private/incognito in some cases) — always resolve through this
+// rather than calling getMessaging() directly.
+export async function getMessagingIfSupported() {
+  if (!(await messagingIsSupported())) return null;
+  return getMessaging(app);
+}
+export { getMessagingToken };
 
 export {
   doc,
