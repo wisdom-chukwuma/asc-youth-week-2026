@@ -23,10 +23,20 @@ export function initInstallBanner() {
   const sub = document.getElementById("install-banner-sub");
   const actionBtn = document.getElementById("install-banner-action");
   const dismissBtn = document.getElementById("install-banner-dismiss");
+  const modals = ["onboarding", "squad-reveal"].map((id) => document.getElementById(id)).filter(Boolean);
   let deferredPrompt = null;
+  let wantsToShow = false;
 
-  const show = () => { banner.hidden = false; };
-  const hide = () => { banner.hidden = true; };
+  // Never surface the install pitch over onboarding/squad-reveal — wait
+  // until both are dismissed, however long that takes.
+  const aModalIsOpen = () => modals.some((m) => !m.hidden);
+  const reveal = () => { if (wantsToShow && !aModalIsOpen()) banner.hidden = false; };
+  const show = () => { wantsToShow = true; reveal(); };
+  const hide = () => { wantsToShow = false; banner.hidden = true; };
+
+  modals.forEach((m) => {
+    new MutationObserver(() => reveal()).observe(m, { attributes: true, attributeFilter: ["hidden"] });
+  });
 
   dismissBtn.addEventListener("click", () => {
     hide();
