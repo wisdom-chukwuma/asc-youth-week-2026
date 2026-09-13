@@ -71,20 +71,25 @@ function showSquadReveal(squad) {
   el.squadReveal.hidden = false;
 }
 
-function wireOnboarding() {
+function wireOnboarding(authReadyPromise) {
   el.onboardingSubmit.addEventListener("click", async () => {
     const nickname = el.nicknameInput.value.trim();
     if (!nickname) { el.nicknameInput.focus(); return; }
     el.onboardingSubmit.disabled = true;
     el.onboardingSubmit.textContent = "One sec…";
-    const squad = squadFor(state.uid);
-    const profileData = {
-      nickname, squad: squad.id, points: 0,
-      checkinDays: [], pollDays: [], reflectionDays: [],
-      photoCounts: {}, shoutoutCounts: {}, bonusAwarded: false,
-      createdAt: serverTimestamp()
-    };
     try {
+      // Anonymous sign-in may still be in flight if this is clicked
+      // fast (or on a slow connection) — wait for the same promise
+      // main() is waiting on rather than assuming state.uid is set.
+      const user = await authReadyPromise;
+      state.uid = user.uid;
+      const squad = squadFor(state.uid);
+      const profileData = {
+        nickname, squad: squad.id, points: 0,
+        checkinDays: [], pollDays: [], reflectionDays: [],
+        photoCounts: {}, shoutoutCounts: {}, bonusAwarded: false,
+        createdAt: serverTimestamp()
+      };
       await setDoc(doc(db, "profiles", state.uid), profileData);
       setProfile(profileData);
       hideOnboarding();
@@ -299,24 +304,30 @@ async function resolveProfile() {
 async function main() {
   cacheDom();
   wireTabs();
-  wireOnboarding();
   wireShareCard();
   el.checkinBtn.addEventListener("click", handleCheckin);
-
-  initEngage();
-  initBoard();
-  initWall();
-  initNotifications();
-  initInstallBanner();
 
   onProfileChange(() => { renderMeChip(); renderSchedule(); updateCheckinButton(); });
   renderSchedule();
   setInterval(updateCountdown, 1000);
   updateCountdown();
 
-  const user = await whenReady();
+  // Kick off anonymous sign-in immediately so it isn't delayed by the
+  // rest of setup, but don't touch Firestore anywhere until it resolves —
+  // a listener started before auth completes gets a terminal
+  // permission-denied that never recovers, even after sign-in finishes.
+  const authReady = whenReady();
+  wireOnboarding(authReady);
+
+  const user = await authReady;
   state.uid = user.uid;
   await resolveProfile();
+
+  initEngage();
+  initBoard();
+  initWall();
+  initNotifications();
+  initInstallBanner();
 }
 
 main();
