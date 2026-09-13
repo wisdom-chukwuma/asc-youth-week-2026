@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Worship The King — Youth Week 2026</title>
+<meta name="description" content="All Saints' Church Youth Week 2026 — schedule, countdown, squads, leaderboard, and live wall." />
+<meta name="theme-color" content="#150a2e" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<div id="onboarding" class="modal-overlay">
+  <div class="glass modal">
+    <span class="modal-eyebrow">Youth Week 2026</span>
+    <h1 class="modal-title">Worship<br/>The King</h1>
+    <p class="modal-verse">"They go from strength to strength, till each appears before God in Zion." — Psalm 84:7</p>
+    <label class="field-label" for="nickname-input">What should we call you?</label>
+    <input id="nickname-input" class="text-input" maxlength="24" autocomplete="off" placeholder="Your name or nickname" />
+    <button id="onboarding-submit" class="btn btn-gold" type="button">Enter Youth Week</button>
+    <p class="modal-note">No sign-up needed — just this device, all week.</p>
+  </div>
+</div>
+
+<div id="squad-reveal" class="modal-overlay" hidden>
+  <div class="glass modal modal-squad">
+    <span class="modal-eyebrow">You're placed on</span>
+    <div id="squad-reveal-emoji" class="squad-reveal-emoji">👑</div>
+    <h2 id="squad-reveal-name" class="modal-title squad-reveal-name">Team Crown</h2>
+    <p class="modal-note">Earn points all week to carry your squad up the board.</p>
+    <button id="squad-reveal-close" class="btn btn-gold" type="button">Let's go</button>
+  </div>
+</div>
+
+<header class="topbar glass">
+  <div class="brand">
+    <span class="brand-sub">All Saints Youth Fellowship</span>
+    <span class="brand-title">Worship The King</span>
+  </div>
+  <button id="me-chip" class="me-chip" type="button">
+    <span id="me-squad-dot" class="me-squad-dot"></span>
+    <span class="me-chip-text">
+      <span id="me-name">—</span>
+      <span id="me-points">0 pts</span>
+    </span>
+  </button>
+</header>
+
+<main>
+
+  <section id="tab-home" class="tab">
+    <div class="glass card countdown-card">
+      <span class="eyebrow" id="countdown-label">Next up</span>
+      <h2 id="countdown-title" class="countdown-title">Loading…</h2>
+      <p id="countdown-sub" class="countdown-sub"></p>
+      <div id="countdown-time" class="countdown-time" aria-live="polite">— — —</div>
+      <button id="checkin-btn" class="btn btn-gold" type="button" disabled>Check-in opens at event time</button>
+      <p id="checkin-status" class="hint"></p>
+    </div>
+
+    <div class="glass card verse-card">
+      <span class="eyebrow">Theme verse</span>
+      <p class="verse-text">"They go from strength to strength, till each appears before God in Zion."</p>
+      <p class="verse-ref">Psalm 84:7</p>
+    </div>
+
+    <div class="glass card share-card">
+      <span class="eyebrow">Bring your friends</span>
+      <p class="hint">Share today's card to your story — one tap.</p>
+      <button id="share-card-btn" class="btn btn-outline" type="button">Share today's card</button>
+    </div>
+  </section>
+
+  <section id="tab-schedule" class="tab" hidden>
+    <h2 class="section-title">Six days, one King</h2>
+    <p class="section-sub">Mon 14 – Sun 20 September · 41 Road, Festac Town</p>
+    <div id="schedule-list" class="schedule-list"></div>
+  </section>
+
+  <section id="tab-engage" class="tab" hidden>
+    <h2 class="section-title" id="engage-day-label">Today's Engage</h2>
+    <div class="glass card">
+      <span class="eyebrow">Vibe check</span>
+      <p id="engage-poll-question" class="engage-question"></p>
+      <div id="engage-poll-options" class="poll-options"></div>
+      <div id="engage-poll-results" class="poll-results" hidden></div>
+    </div>
+    <div class="glass card">
+      <span class="eyebrow">Reflection</span>
+      <p id="engage-reflection-question" class="engage-question"></p>
+      <textarea id="engage-reflection-input" class="text-input textarea" maxlength="280" placeholder="Type a line or two…"></textarea>
+      <button id="engage-reflection-submit" class="btn btn-gold" type="button">Submit reflection</button>
+      <p id="engage-reflection-status" class="hint"></p>
+    </div>
+  </section>
+
+  <section id="tab-board" class="tab" hidden>
+    <h2 class="section-title">Leaderboard</h2>
+    <p class="section-sub">Live across every phone in the building</p>
+    <div class="glass card">
+      <span class="eyebrow">Squad standings</span>
+      <div id="board-squad-list" class="squad-bars"></div>
+    </div>
+    <div class="glass card">
+      <span class="eyebrow">Top individuals</span>
+      <div id="board-me-rank" class="me-rank"></div>
+      <ol id="board-individual-list" class="rank-list"></ol>
+    </div>
+  </section>
+
+  <section id="tab-wall" class="tab" hidden>
+    <h2 class="section-title">The Wall</h2>
+    <p class="section-sub">Moments from the week, live</p>
+    <div class="glass card">
+      <span class="eyebrow">Post a photo</span>
+      <label id="photo-upload-label" class="btn btn-outline photo-upload-label" for="photo-upload-input">Add a photo</label>
+      <input id="photo-upload-input" type="file" accept="image/*" capture="environment" hidden />
+      <p id="photo-upload-status" class="hint"></p>
+      <div id="photo-grid" class="photo-grid"></div>
+    </div>
+    <div class="glass card">
+      <span class="eyebrow">Shoutouts</span>
+      <p class="hint">Anonymous encouragement, drop one for the room.</p>
+      <textarea id="shoutout-input" class="text-input textarea" maxlength="200" placeholder="Say something good…"></textarea>
+      <button id="shoutout-submit" class="btn btn-gold" type="button">Post shoutout</button>
+      <p id="shoutout-status" class="hint"></p>
+      <div id="shoutout-list" class="shoutout-list"></div>
+    </div>
+  </section>
+
+</main>
+
+<nav class="tabbar glass">
+  <button class="tab-btn is-active" data-tab="home" type="button">
+    <svg viewBox="0 0 24 24" class="tab-icon"><path d="M4 11.5 12 4l8 7.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg>
+    <span>Home</span>
+  </button>
+  <button class="tab-btn" data-tab="schedule" type="button">
+    <svg viewBox="0 0 24 24" class="tab-icon"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 9.5h16M8 3v3.5M16 3v3.5" stroke-width="1.6" fill="none" stroke="currentColor"/></svg>
+    <span>Schedule</span>
+  </button>
+  <button class="tab-btn" data-tab="engage" type="button">
+    <svg viewBox="0 0 24 24" class="tab-icon"><path d="M4 5h16v10H9l-4 4v-4H4z"/></svg>
+    <span>Engage</span>
+  </button>
+  <button class="tab-btn" data-tab="board" type="button">
+    <svg viewBox="0 0 24 24" class="tab-icon"><rect x="4" y="12" width="4" height="8"/><rect x="10" y="7" width="4" height="13"/><rect x="16" y="3" width="4" height="17"/></svg>
+    <span>Board</span>
+  </button>
+  <button class="tab-btn" data-tab="wall" type="button">
+    <svg viewBox="0 0 24 24" class="tab-icon"><rect x="3" y="4" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m4 16 4.5-4.5 3 3L17 9l3 4.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+    <span>Wall</span>
+  </button>
+</nav>
+
+<canvas id="card-canvas" width="1080" height="1350" hidden></canvas>
+
+<div id="toast" class="toast" hidden></div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
