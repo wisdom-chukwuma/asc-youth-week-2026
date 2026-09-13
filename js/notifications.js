@@ -3,11 +3,12 @@ import { state, showToast } from "./state.js";
 
 // From Firebase Console > Project settings > Cloud Messaging > Web
 // configuration > Web Push certificates. See SETUP.md.
-const VAPID_KEY = "PASTE_VAPID_KEY_HERE";
+const VAPID_KEY = "BFykHZWV-jC7msdv_eJG_dbVM90OpgoRZ13_6K9w_INrmzUJ0NK1IiZ7WOJOM57PVUSLD3foF7MJmJTdx210Ww4";
 
 export function initNotifications() {
   const btn = document.getElementById("notif-btn");
   if (!btn) return;
+  const label = btn.querySelector(".action-tile-label");
 
   if (!("Notification" in window) || !("serviceWorker" in navigator) || VAPID_KEY.startsWith("PASTE_")) {
     btn.hidden = true;
@@ -49,10 +50,10 @@ export function initNotifications() {
 
   function updateLabel() {
     if (Notification.permission === "granted") {
-      btn.textContent = "\u{1F514} Reminders on";
+      label.textContent = "Reminders on";
       btn.disabled = true;
     } else {
-      btn.textContent = "\u{1F514} Get notified before each session";
+      label.textContent = "Get notified before each session";
       btn.disabled = false;
     }
   }

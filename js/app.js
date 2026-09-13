@@ -9,6 +9,7 @@ import { initBoard } from "./board.js";
 import { initWall } from "./wall.js";
 import { shareDayCard } from "./card.js";
 import { initNotifications } from "./notifications.js";
+import { initInstallBanner } from "./install-banner.js";
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
@@ -98,18 +99,19 @@ function wireOnboarding() {
 }
 
 function wireShareCard() {
+  const label = el.shareCardBtn.querySelector(".action-tile-label");
+  const originalText = label.textContent;
   el.shareCardBtn.addEventListener("click", async () => {
     const dayInfo = todaySchedule() || SCHEDULE.find((d) => new Date(d.sessions[0].start) > new Date()) || SCHEDULE[SCHEDULE.length - 1];
     el.shareCardBtn.disabled = true;
-    const originalText = el.shareCardBtn.textContent;
-    el.shareCardBtn.textContent = "Preparing…";
+    label.textContent = "Preparing…";
     try {
       await shareDayCard(dayInfo, state.profile);
     } catch (e) {
       showToast("Couldn't create the card — try again");
     } finally {
       el.shareCardBtn.disabled = false;
-      el.shareCardBtn.textContent = originalText;
+      label.textContent = originalText;
     }
   });
 }
@@ -305,6 +307,7 @@ async function main() {
   initBoard();
   initWall();
   initNotifications();
+  initInstallBanner();
 
   onProfileChange(() => { renderMeChip(); renderSchedule(); updateCheckinButton(); });
   renderSchedule();

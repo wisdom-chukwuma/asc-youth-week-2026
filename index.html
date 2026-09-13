@@ -24,6 +24,16 @@
 </head>
 <body>
 
+<div id="install-banner" class="install-banner glass" hidden>
+  <span class="install-banner-icon">👑</span>
+  <span class="install-banner-text">
+    <strong>Install Worship The King</strong>
+    <span id="install-banner-sub">Add it to your home screen for one-tap access all week.</span>
+  </span>
+  <button id="install-banner-action" class="install-banner-action" type="button" hidden>Install</button>
+  <button id="install-banner-dismiss" class="install-banner-dismiss" type="button" aria-label="Dismiss">✕</button>
+</div>
+
 <div id="onboarding" class="modal-overlay">
   <div class="glass modal">
     <span class="modal-eyebrow">Youth Week 2026</span>
@@ -63,7 +73,7 @@
 <main>
 
   <section id="tab-home" class="tab">
-    <div class="glass card countdown-card">
+    <div class="glass card countdown-card hero">
       <span class="eyebrow" id="countdown-label">Next up</span>
       <h2 id="countdown-title" class="countdown-title">Loading…</h2>
       <p id="countdown-sub" class="countdown-sub"></p>
@@ -72,22 +82,24 @@
       <p id="checkin-status" class="hint"></p>
     </div>
 
-    <div class="glass card verse-card">
-      <span class="eyebrow">Theme verse</span>
+    <blockquote class="verse-strip">
       <p class="verse-text">"They go from strength to strength, till each appears before God in Zion."</p>
-      <p class="verse-ref">Psalm 84:7</p>
-    </div>
+      <cite class="verse-ref">Psalm 84:7</cite>
+    </blockquote>
 
-    <div class="glass card share-card">
-      <span class="eyebrow">Bring your friends</span>
-      <p class="hint">Share today's card to your story — one tap.</p>
-      <button id="share-card-btn" class="btn btn-outline" type="button">Share today's card</button>
-    </div>
-
-    <div class="glass card notif-card">
-      <span class="eyebrow">Never miss a session</span>
-      <p class="hint">Get a nudge 30 minutes before each night starts.</p>
-      <button id="notif-btn" class="btn btn-outline" type="button" hidden>Get notified before each session</button>
+    <div class="action-row">
+      <button id="share-card-btn" class="action-tile" type="button">
+        <span class="action-tile-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M18 8a3 3 0 1 0-2.83-4H15a3 3 0 0 0 .09 4.26L8.9 11.7a3 3 0 1 0 0 4.6l6.19 3.44A3 3 0 1 0 16 17a3 3 0 0 0-.09.7L9.72 14.3a3 3 0 0 0 0-4.6L15.91 6.3c.32.24.68.42 1.09.53"/></svg>
+        </span>
+        <span class="action-tile-label">Share today's card</span>
+      </button>
+      <button id="notif-btn" class="action-tile" type="button" hidden>
+        <span class="action-tile-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 0 0-5 5v3.2c0 .5-.2 1-.5 1.4L5 14.5c-.6.8 0 2 1 2h12c1 0 1.6-1.2 1-2l-1.5-2c-.3-.4-.5-.9-.5-1.4V8a5 5 0 0 0-5-5zM9.5 18a2.5 2.5 0 0 0 5 0"/></svg>
+        </span>
+        <span class="action-tile-label">Get notified before each session</span>
+      </button>
     </div>
   </section>
 
