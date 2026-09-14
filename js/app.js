@@ -27,7 +27,7 @@ function cacheDom() {
   el.nicknameInput = document.getElementById("nickname-input");
   el.onboardingSubmit = document.getElementById("onboarding-submit");
   el.squadReveal = document.getElementById("squad-reveal");
-  el.squadRevealEmoji = document.getElementById("squad-reveal-emoji");
+  el.squadRevealBadge = document.getElementById("squad-reveal-badge");
   el.squadRevealName = document.getElementById("squad-reveal-name");
   el.squadRevealClose = document.getElementById("squad-reveal-close");
 
@@ -64,11 +64,29 @@ function wireTabs() {
   el.meChip.addEventListener("click", () => switchTab("board"));
 }
 
+function wireWallSubnav() {
+  const btns = [...document.querySelectorAll(".wall-subnav-btn")];
+  const sections = {
+    gallery: document.getElementById("wallsub-gallery"),
+    photos: document.getElementById("wallsub-photos"),
+    board: document.getElementById("wallsub-board"),
+    shoutouts: document.getElementById("wallsub-shoutouts")
+  };
+  btns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.wallsub;
+      Object.entries(sections).forEach(([k, el2]) => { if (el2) el2.hidden = k !== key; });
+      btns.forEach((b) => b.classList.toggle("is-active", b === btn));
+    });
+  });
+}
+
 function showOnboarding() { el.onboarding.hidden = false; }
 function hideOnboarding() { el.onboarding.hidden = true; }
 
 function showSquadReveal(squad) {
-  el.squadRevealEmoji.textContent = squad.emoji;
+  el.squadRevealBadge.textContent = squad.initial;
+  el.squadRevealBadge.style.background = squad.color;
   el.squadRevealName.textContent = `Team ${squad.name}`;
   el.squadRevealName.style.color = squad.color;
   el.squadReveal.hidden = false;
@@ -152,7 +170,7 @@ function updateCountdown() {
   const session = nextSession();
   if (!session) {
     el.countdownLabel.textContent = "Youth Week 2026";
-    el.countdownTitle.textContent = "That's a wrap! \u{1F451}";
+    el.countdownTitle.textContent = "That's a wrap!";
     el.countdownSub.textContent = "Thank you for anticipating with us. See you next year.";
     el.countdownTime.textContent = "";
   } else {
@@ -307,6 +325,7 @@ async function resolveProfile() {
 async function main() {
   cacheDom();
   wireTabs();
+  wireWallSubnav();
   wireShareCard();
   el.checkinBtn.addEventListener("click", handleCheckin);
 

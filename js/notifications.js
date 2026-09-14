@@ -39,7 +39,7 @@ export function initNotifications() {
       });
       if (token && state.uid) {
         await updateDoc(doc(db, "profiles", state.uid), { fcmToken: token });
-        showToast("Reminders on — see you there! \u{1F514}");
+        showToast("Reminders on — see you there!");
       }
     } catch (e) {
       showToast("Couldn't enable notifications — try again");

@@ -25,7 +25,7 @@ export function initBoard() {
       const row = document.createElement("div");
       row.className = "squad-bar-row";
       row.innerHTML =
-        `<div class="squad-bar-label"><span class="squad-bar-emoji">${s.emoji}</span><span>${s.name}</span>` +
+        `<div class="squad-bar-label"><span class="squad-badge squad-badge-sm" style="background:${s.color}">${s.initial}</span><span>${s.name}</span>` +
         `<span class="squad-bar-points">${pts} pts</span></div>` +
         `<div class="squad-bar-track"><div class="squad-bar-fill" style="width:${(pts / maxPts) * 100}%;background:${s.color}"></div></div>`;
       squadListEl.appendChild(row);
@@ -57,7 +57,7 @@ export function initBoard() {
     if (!state.profile) {
       meRankEl.textContent = "";
     } else if (meInTop) {
-      meRankEl.textContent = `You're #${[...listEl.children].findIndex((li) => li.classList.contains("is-me")) + 1} with ${meScoreInTop} pts \u{1F389}`;
+      meRankEl.textContent = `You're #${[...listEl.children].findIndex((li) => li.classList.contains("is-me")) + 1} with ${meScoreInTop} pts`;
     } else {
       meRankEl.textContent = `You: ${state.profile.points || 0} pts — climb into the top 20!`;
     }

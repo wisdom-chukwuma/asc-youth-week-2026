@@ -25,7 +25,7 @@
 <body>
 
 <div id="install-banner" class="install-banner glass" hidden>
-  <span class="install-banner-icon">👑</span>
+  <img class="install-banner-icon" src="icons/icon-192.png" alt="" width="36" height="36" />
   <span class="install-banner-text">
     <strong>Install Worship The King</strong>
     <span id="install-banner-sub">Add it to your home screen for one-tap access all week.</span>
@@ -49,7 +49,7 @@
 <div id="squad-reveal" class="modal-overlay" hidden>
   <div class="glass modal modal-squad">
     <span class="modal-eyebrow">You're placed on</span>
-    <div id="squad-reveal-emoji" class="squad-reveal-emoji">👑</div>
+    <div id="squad-reveal-badge" class="squad-badge squad-badge-lg"></div>
     <h2 id="squad-reveal-name" class="modal-title squad-reveal-name">Team Crown</h2>
     <p class="modal-note">Earn points all week to carry your squad up the board.</p>
     <button id="squad-reveal-close" class="btn btn-gold" type="button">Let's go</button>
@@ -144,51 +144,64 @@
     <h2 class="section-title">The Wall</h2>
     <p class="section-sub">Moments from the week, live</p>
 
-    <div class="glass card">
-      <span class="eyebrow">Event Gallery</span>
-      <p class="hint">Official photos and clips, posted daily.</p>
-      <div id="gallery-day-pills" class="gallery-day-pills"></div>
-      <div id="gallery-grid" class="photo-grid gallery-grid"></div>
-      <p id="gallery-empty" class="hint">No highlights posted for this day yet — check back soon.</p>
+    <div class="wall-subnav">
+      <button class="wall-subnav-btn is-active" data-wallsub="gallery" type="button">Gallery</button>
+      <button class="wall-subnav-btn" data-wallsub="photos" type="button">Photos</button>
+      <button class="wall-subnav-btn" data-wallsub="board" type="button">Board</button>
+      <button class="wall-subnav-btn" data-wallsub="shoutouts" type="button">Shoutouts</button>
     </div>
 
-    <div class="glass card">
-      <span class="eyebrow">Post a photo</span>
-      <label id="photo-upload-label" class="btn btn-outline photo-upload-label" for="photo-upload-input">Add a photo</label>
-      <input id="photo-upload-input" type="file" accept="image/*" capture="environment" hidden />
-      <p id="photo-upload-status" class="hint"></p>
-      <p class="hint">Tap any photo to open it and join the conversation.</p>
-      <div id="photo-grid" class="photo-grid"></div>
+    <div id="wallsub-gallery" class="wall-subsection">
+      <div class="reel-shell">
+        <div id="gallery-day-pills" class="reel-day-pills"></div>
+        <div id="gallery-reel" class="reel-feed"></div>
+        <p id="gallery-empty" class="hint reel-empty" hidden>No highlights posted for this day yet.</p>
+      </div>
     </div>
 
-    <div class="glass card">
-      <span class="eyebrow">Signature Board</span>
-      <p class="hint">One board for the whole church — sign once, and your name stays on it all week.</p>
+    <div id="wallsub-photos" class="wall-subsection" hidden>
+      <div class="glass card">
+        <span class="eyebrow">Post a photo</span>
+        <label id="photo-upload-label" class="btn btn-outline photo-upload-label" for="photo-upload-input">Add a photo</label>
+        <input id="photo-upload-input" type="file" accept="image/*" capture="environment" hidden />
+        <p id="photo-upload-status" class="hint"></p>
+        <p class="hint">Tap any photo to open it and join the conversation.</p>
+        <div id="photo-grid" class="photo-grid"></div>
+      </div>
+    </div>
 
-      <div class="board-frame">
-        <div class="board-frame-head">
-          <span class="board-frame-title">Worship The King</span>
-          <span class="board-frame-sub">Youth Week 2026 · Signed by all of us</span>
+    <div id="wallsub-board" class="wall-subsection" hidden>
+      <div class="glass card">
+        <span class="eyebrow">Signature Board</span>
+        <p class="hint">One board for the whole church — sign once, and your name stays on it all week.</p>
+
+        <div class="board-frame">
+          <div class="board-frame-head">
+            <span class="board-frame-title">Worship The King</span>
+            <span class="board-frame-sub">Youth Week 2026 · Signed by all of us</span>
+          </div>
+          <div id="signature-grid" class="board-signatures"></div>
+          <p id="signature-board-empty" class="hint board-empty">Be the first to sign the board.</p>
         </div>
-        <div id="signature-grid" class="board-signatures"></div>
-        <p id="signature-board-empty" class="hint board-empty">Be the first to sign the board.</p>
-      </div>
 
-      <p id="signature-status" class="hint"></p>
-      <canvas id="signature-canvas" class="signature-canvas" width="600" height="220"></canvas>
-      <div class="signature-actions">
-        <button id="signature-clear" class="btn btn-outline signature-btn" type="button">Clear</button>
-        <button id="signature-save" class="btn btn-gold signature-btn" type="button">Add my signature</button>
+        <p id="signature-status" class="hint"></p>
+        <canvas id="signature-canvas" class="signature-canvas" width="600" height="220"></canvas>
+        <div class="signature-actions">
+          <button id="signature-clear" class="btn btn-outline signature-btn" type="button">Clear</button>
+          <button id="signature-save" class="btn btn-gold signature-btn" type="button">Add my signature</button>
+        </div>
       </div>
     </div>
 
-    <div class="glass card">
-      <span class="eyebrow">Shoutouts</span>
-      <p class="hint">Anonymous encouragement, drop one for the room.</p>
-      <textarea id="shoutout-input" class="text-input textarea" maxlength="200" placeholder="Say something good…"></textarea>
-      <button id="shoutout-submit" class="btn btn-gold" type="button">Post shoutout</button>
-      <p id="shoutout-status" class="hint"></p>
-      <div id="shoutout-list" class="shoutout-list"></div>
+    <div id="wallsub-shoutouts" class="wall-subsection" hidden>
+      <div class="glass card">
+        <span class="eyebrow">Shoutouts</span>
+        <p class="hint">Anonymous encouragement, drop one for the room.</p>
+        <textarea id="shoutout-input" class="text-input textarea" maxlength="200" placeholder="Say something good…"></textarea>
+        <button id="shoutout-submit" class="btn btn-gold" type="button">Post shoutout</button>
+        <p id="shoutout-status" class="hint"></p>
+        <div id="shoutout-list" class="shoutout-list"></div>
+      </div>
     </div>
   </section>
 
@@ -200,7 +213,8 @@
       <div class="lightbox-actions">
         <p id="lightbox-meta" class="lightbox-meta"></p>
         <button id="lightbox-like-btn" type="button" class="like-btn">
-          <span class="like-icon">🤍</span><span class="like-count">0</span>
+          <svg viewBox="0 0 24 24" class="like-icon"><path d="M12 20.5s-6.9-4.35-9.5-8.5C.9 9 1.9 4.9 5.6 4c2.2-.5 4 .6 5 2.1C11.6 4.6 13.4 3.5 15.6 4c3.7.9 4.7 5 2.1 8-2.6 4.15-9.5 8.5-9.5 8.5z"/></svg>
+          <span class="like-count">0</span>
         </button>
       </div>
       <div id="lightbox-comments" class="comment-list"></div>

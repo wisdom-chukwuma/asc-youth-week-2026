@@ -137,7 +137,7 @@ export async function shareDayCard(dayInfo, profile) {
   ctx.textAlign = "center";
   ctx.fillStyle = "#f5eefc";
   ctx.font = "700 30px Manrope, sans-serif";
-  const who = profile?.nickname ? `${squad.emoji} ${profile.nickname} · Team ${squad.name}` : "Anticipate!";
+  const who = profile?.nickname ? `${profile.nickname} · Team ${squad.name}` : "Anticipate!";
   ctx.fillText(who, w / 2, h - 110);
 
   ctx.fillStyle = "#8677a8";
@@ -153,7 +153,7 @@ export async function shareDayCard(dayInfo, profile) {
       await navigator.share({
         files: [file],
         title: "Worship The King — Youth Week 2026",
-        text: "Join us at All Saints' Church Festac this week 🔥"
+        text: "Join us at All Saints' Church Festac this week"
       });
       return "shared";
     } catch (e) {

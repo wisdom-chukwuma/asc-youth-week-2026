@@ -118,41 +118,41 @@ export const SCHEDULE = [
 export const ENGAGE = {
   1: {
     poll: "How ready is your heart for this week?",
-    options: ["Locked in \u{1F451}", "Getting there ✨", "Show up, see \u{1F440}"],
+    options: ["Locked in", "Getting there", "Show up, see"],
     reflection: "One truth you're hoping God shows you this week:"
   },
   2: {
     poll: "How did tonight's Bible Study land?",
-    options: ["Convicted \u{1F62E}", "Encouraged \u{1F64C}", "Still chewing on it \u{1F9E0}"],
+    options: ["Convicted", "Encouraged", "Still chewing on it"],
     reflection: "One verse from tonight worth remembering:"
   },
   3: {
     poll: "Purpose meets profession — how's that hitting?",
-    options: ["Clarity \u{1F3AF}", "Challenged \u{1F4AA}", "Still figuring it out \u{1F914}"],
+    options: ["Clarity", "Challenged", "Still figuring it out"],
     reflection: "One way you want to live more purposefully:"
   },
   4: {
     poll: "How's your spirit after tonight?",
-    options: ["Ignited \u{1F525}", "Refreshed \u{1F54A}️", "Still processing \u{1F64F}"],
+    options: ["Ignited", "Refreshed", "Still processing"],
     reflection: "One thing you're carrying from Praise Unleashed:"
   },
   5: {
     poll: "Fit for Purpose + Spotlight — today's vibe?",
-    options: ["Energized ⚡", "Inspired by the talent \u{1F3A8}", "Both! \u{1F389}"],
+    options: ["Energized", "Inspired by the talent", "Both!"],
     reflection: "One creative gift you want to steward better:"
   },
   6: {
     poll: "How's your heart on Harvest Sunday?",
-    options: ["Grateful \u{1F33E}", "Full circle \u{1F451}", "Ready for what's next \u{1F680}"],
+    options: ["Grateful", "Full circle", "Ready for what's next"],
     reflection: "One thing you're thankful for from this Youth Week:"
   }
 };
 
 export const SQUADS = [
-  { id: "crown", name: "Crown", emoji: "\u{1F451}", color: "#F4B942" },
-  { id: "throne", name: "Throne", emoji: "⚔️", color: "#E85D75" },
-  { id: "altar", name: "Altar", emoji: "\u{1F525}", color: "#5DB3E8" },
-  { id: "sanctuary", name: "Sanctuary", emoji: "\u{1F54A}️", color: "#7DDE92" }
+  { id: "crown", name: "Crown", initial: "C", color: "#F4B942" },
+  { id: "throne", name: "Throne", initial: "T", color: "#E85D75" },
+  { id: "altar", name: "Altar", initial: "A", color: "#5DB3E8" },
+  { id: "sanctuary", name: "Sanctuary", initial: "S", color: "#7DDE92" }
 ];
 
 export const POINTS = {

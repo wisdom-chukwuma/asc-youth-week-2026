@@ -34,29 +34,29 @@ async function sendToAll(title, body) {
 const TZ = "Africa/Lagos";
 
 exports.remindDay1 = onSchedule({ schedule: "30 17 14 9 *", timeZone: TZ }, async () => {
-  await sendToAll("Theme Expository starts in 30 min \u{1F451}", "Discovering truth through the word — see you at 6pm!");
+  await sendToAll("Theme Expository starts in 30 min", "Discovering truth through the word — see you at 6pm!");
 });
 
 exports.remindDay2 = onSchedule({ schedule: "30 17 15 9 *", timeZone: TZ }, async () => {
-  await sendToAll("Bible Study starts in 30 min \u{1F4D6}", "Exploring God's Word together — see you at 6pm!");
+  await sendToAll("Bible Study starts in 30 min", "Exploring God's Word together — see you at 6pm!");
 });
 
 exports.remindDay3 = onSchedule({ schedule: "30 17 16 9 *", timeZone: TZ }, async () => {
-  await sendToAll("Purpose Meets Profession starts in 30 min \u{1F4BC}", "Lessons for impactful living — see you at 6pm!");
+  await sendToAll("Purpose Meets Profession starts in 30 min", "Lessons for impactful living — see you at 6pm!");
 });
 
 exports.remindDay4 = onSchedule({ schedule: "30 16 17 9 *", timeZone: TZ }, async () => {
-  await sendToAll("Ignite Thy Spirit starts in 30 min \u{1F525}", "A night of revival + Praise Unleashed — see you at 5pm!");
+  await sendToAll("Ignite Thy Spirit starts in 30 min", "A night of revival + Praise Unleashed — see you at 5pm!");
 });
 
 exports.remindDay5Morning = onSchedule({ schedule: "30 8 19 9 *", timeZone: TZ }, async () => {
-  await sendToAll("Fit For Purpose starts in 30 min ☀️", "Building healthy lives — see you at 9am!");
+  await sendToAll("Fit For Purpose starts in 30 min", "Building healthy lives — see you at 9am!");
 });
 
 exports.remindDay5Evening = onSchedule({ schedule: "30 16 19 9 *", timeZone: TZ }, async () => {
-  await sendToAll("The Spotlight Experience starts in 30 min \u{1F3A8}", "Kingdom Creatives night — see you at 5pm!");
+  await sendToAll("The Spotlight Experience starts in 30 min", "Kingdom Creatives night — see you at 5pm!");
 });
 
 exports.remindDay6 = onSchedule({ schedule: "30 7 20 9 *", timeZone: TZ }, async () => {
-  await sendToAll("Youth Harvest Thanksgiving starts in 30 min \u{1F33E}", "Bring your best before the King — see you at 8am!");
+  await sendToAll("Youth Harvest Thanksgiving starts in 30 min", "Bring your best before the King — see you at 8am!");
 });

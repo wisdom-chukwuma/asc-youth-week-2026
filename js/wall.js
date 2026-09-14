@@ -76,7 +76,7 @@ export function initWall() {
       const toggle = document.createElement("button");
       toggle.type = "button";
       toggle.className = "shoutout-comment-toggle";
-      toggle.textContent = "\u{1F4AC} Reply";
+      toggle.textContent = "Reply";
       actions.appendChild(toggle);
 
       initLikeButtonStatic(likeBtn, "shoutout", docSnap.id, "shoutouts");
