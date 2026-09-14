@@ -1,22 +1,24 @@
 import { subscribeComments, postComment } from "./comments.js";
+import { initLikeButton } from "./likes.js";
 import { showToast } from "./state.js";
 
-let unsub = null;
+const PARENT_COLLECTION = { photo: "photos", gallery: "gallery" };
+
+let commentsUnsub = null;
+let likeUnsub = null;
 let currentParentId = null;
 let currentParentType = null;
 
 export function initLightbox() {
   const lightbox = document.getElementById("photo-lightbox");
-  const img = document.getElementById("lightbox-img");
   const video = document.getElementById("lightbox-video");
-  const meta = document.getElementById("lightbox-meta");
-  const comments = document.getElementById("lightbox-comments");
   const input = document.getElementById("lightbox-comment-input");
   const submit = document.getElementById("lightbox-comment-submit");
   const closeBtn = document.getElementById("lightbox-close");
 
   function close() {
-    if (unsub) { unsub(); unsub = null; }
+    if (commentsUnsub) { commentsUnsub(); commentsUnsub = null; }
+    if (likeUnsub) { likeUnsub(); likeUnsub = null; }
     video.pause();
     video.removeAttribute("src");
     video.load();
@@ -45,6 +47,7 @@ export function openLightbox(item) {
   const meta = document.getElementById("lightbox-meta");
   const comments = document.getElementById("lightbox-comments");
   const input = document.getElementById("lightbox-comment-input");
+  const likeBtn = document.getElementById("lightbox-like-btn");
 
   currentParentId = item.parentId;
   currentParentType = item.parentType;
@@ -67,7 +70,12 @@ export function openLightbox(item) {
     img.alt = item.metaText || "";
   }
 
-  if (unsub) unsub();
-  unsub = subscribeComments(item.parentType, item.parentId, comments);
+  if (commentsUnsub) commentsUnsub();
+  commentsUnsub = subscribeComments(item.parentType, item.parentId, comments);
+
+  if (likeUnsub) likeUnsub();
+  const parentCollection = PARENT_COLLECTION[item.parentType];
+  likeUnsub = parentCollection ? initLikeButton(likeBtn, item.parentType, item.parentId, parentCollection) : null;
+
   lightbox.hidden = false;
 }

@@ -3,9 +3,10 @@ import {
   onSnapshot, ref, uploadBytes, getDownloadURL, serverTimestamp, increment
 } from "./firebase-config.js";
 import { POINTS, todaySchedule } from "./data.js";
-import { state, showToast, applyDocChanges } from "./state.js";
+import { state, showToast, applyDocChanges, markLoading } from "./state.js";
 import { postComment, subscribeComments } from "./comments.js";
 import { openLightbox } from "./lightbox.js";
+import { initLikeButtonStatic, likeButtonHtml } from "./likes.js";
 
 async function compressImage(file, maxDim = 1600, quality = 0.8) {
   const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
@@ -41,9 +42,10 @@ export function initWall() {
       tile.className = "photo-tile";
       tile.dataset.id = docSnap.id;
       const img = document.createElement("img");
-      img.src = p.url;
+      markLoading(tile, img);
       img.loading = "lazy";
       img.alt = p.nickname ? `Photo from ${p.nickname}` : "Youth Week photo";
+      img.src = p.url;
       tile.appendChild(img);
       tile.addEventListener("click", () => openLightbox({
         type: "image", url: p.url,
@@ -66,10 +68,18 @@ export function initWall() {
       msg.className = "shoutout-msg";
       msg.textContent = s.message;
 
+      const actions = document.createElement("div");
+      actions.className = "shoutout-actions";
+      actions.innerHTML = likeButtonHtml();
+      const likeBtn = actions.querySelector(".like-btn");
+
       const toggle = document.createElement("button");
       toggle.type = "button";
       toggle.className = "shoutout-comment-toggle";
       toggle.textContent = "\u{1F4AC} Reply";
+      actions.appendChild(toggle);
+
+      initLikeButtonStatic(likeBtn, "shoutout", docSnap.id, "shoutouts");
 
       const panel = document.createElement("div");
       panel.className = "shoutout-comment-panel";
@@ -108,7 +118,7 @@ export function initWall() {
       });
 
       item.appendChild(msg);
-      item.appendChild(toggle);
+      item.appendChild(actions);
       item.appendChild(panel);
       return item;
     });

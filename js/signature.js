@@ -3,7 +3,7 @@ import {
   onSnapshot, ref, uploadBytes, getDownloadURL, serverTimestamp, increment
 } from "./firebase-config.js";
 import { POINTS } from "./data.js";
-import { state, showToast, applyDocChanges } from "./state.js";
+import { state, showToast, applyDocChanges, markLoading } from "./state.js";
 
 export function initSignatureBoard() {
   const canvas = document.getElementById("signature-canvas");
@@ -97,9 +97,10 @@ export function initSignatureBoard() {
       tile.className = "photo-tile";
       tile.dataset.id = docSnap.id;
       const img = document.createElement("img");
-      img.src = s.url;
+      markLoading(tile, img);
       img.loading = "lazy";
       img.alt = s.nickname ? `${s.nickname}'s signature` : "Signature";
+      img.src = s.url;
       tile.appendChild(img);
       return tile;
     });

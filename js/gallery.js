@@ -1,6 +1,7 @@
 import { db, collection, query, orderBy, limit, onSnapshot } from "./firebase-config.js";
 import { SCHEDULE } from "./data.js";
 import { openLightbox } from "./lightbox.js";
+import { markLoading } from "./state.js";
 
 export function initGallery() {
   const pillsEl = document.getElementById("gallery-day-pills");
@@ -34,10 +35,11 @@ export function initGallery() {
       tile.className = "photo-tile gallery-tile";
       if (item.type === "video") {
         const video = document.createElement("video");
-        video.src = item.url;
+        markLoading(tile, video);
         video.muted = true;
         video.preload = "metadata";
         video.playsInline = true;
+        video.src = item.url;
         tile.appendChild(video);
         const playIcon = document.createElement("span");
         playIcon.className = "gallery-play-icon";
@@ -45,9 +47,10 @@ export function initGallery() {
         tile.appendChild(playIcon);
       } else {
         const img = document.createElement("img");
-        img.src = item.url;
+        markLoading(tile, img);
         img.loading = "lazy";
         img.alt = `Day ${item.day} highlight`;
+        img.src = item.url;
         tile.appendChild(img);
       }
       tile.addEventListener("click", () => openLightbox({

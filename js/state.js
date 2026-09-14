@@ -38,6 +38,18 @@ export function applyDocChanges(container, changes, renderItem) {
   });
 }
 
+// Skeleton-shimmer-then-fade-in for a grid tile's media element — the
+// gallery mixes tiny app photos with much larger phone-camera/video-
+// frame exports, so a plain instant swap looks broken while the big
+// ones are still loading. Call right after creating `mediaEl`, before
+// setting its src.
+export function markLoading(tile, mediaEl) {
+  tile.classList.add("is-loading");
+  const done = () => { tile.classList.remove("is-loading"); mediaEl.classList.add("is-loaded"); };
+  mediaEl.addEventListener(mediaEl.tagName === "VIDEO" ? "loadeddata" : "load", done, { once: true });
+  mediaEl.addEventListener("error", done, { once: true });
+}
+
 export function showToast(message, ms = 2600) {
   const el = document.getElementById("toast");
   if (!el) return;

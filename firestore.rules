@@ -36,17 +36,25 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // A like-count update may touch only that one field - keeps the
+    // "everyone can nudge a counter" honor-system pattern (see
+    // squadTotals above) from opening the door to editing anything else.
+    function likeCountOnly() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(["likeCount"]);
+    }
+
     match /photos/{id} {
       allow read: if signedIn();
       allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
       allow delete: if signedIn() && resource.data.uid == request.auth.uid;
-      allow update: if false;
+      allow update: if signedIn() && likeCountOnly();
     }
 
     match /shoutouts/{id} {
       allow read: if signedIn();
       allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
-      allow update, delete: if false;
+      allow update: if signedIn() && likeCountOnly();
+      allow delete: if false;
     }
 
     match /signatures/{id} {
@@ -61,13 +69,27 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // One doc per (parent, viewer) - id is "{parentType}_{parentId}_{uid}"
+    // chosen client-side, so existence itself proves who liked what
+    // without a query. Delete = unlike.
+    match /likes/{id} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+      allow update: if false;
+    }
+
     // Official day-by-day event gallery — curated, not participant
     // uploads. Written only via an authenticated admin script (bypasses
     // these rules entirely, same as the Firebase Console); the app
     // itself only ever reads this collection.
     match /gallery/{id} {
       allow read: if signedIn();
-      allow write: if false;
+      allow create, delete: if false;
+      // Admin uploads go through an authenticated script that bypasses
+      // rules entirely (see scripts/upload-gallery.js) - the only write
+      // path left open to the app itself is nudging the like count.
+      allow update: if signedIn() && likeCountOnly();
     }
   }
 }
