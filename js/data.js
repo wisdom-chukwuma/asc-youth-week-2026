@@ -163,6 +163,9 @@ export const POINTS = {
   photoDailyCap: 2,
   shoutout: 3,
   shoutoutDailyCap: 2,
+  signature: 5,
+  comment: 2,
+  commentDailyCap: 10,
   fullWeekBonus: 25
 };
 

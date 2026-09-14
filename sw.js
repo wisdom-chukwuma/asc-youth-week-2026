@@ -36,12 +36,12 @@ self.addEventListener("notificationclick", (event) => {
 
 // ---------- App shell caching ----------
 
-const CACHE_NAME = "wtk-shell-v2";
+const CACHE_NAME = "wtk-shell-v3";
 const SHELL_FILES = [
   "/", "/index.html", "/manifest.json",
   "/css/styles.css",
   "/js/app.js", "/js/board.js", "/js/card.js", "/js/data.js",
-  "/js/engage.js", "/js/firebase-config.js", "/js/notifications.js", "/js/install-banner.js", "/js/state.js", "/js/wall.js",
+  "/js/engage.js", "/js/firebase-config.js", "/js/notifications.js", "/js/install-banner.js", "/js/state.js", "/js/wall.js", "/js/signature.js",
   "/icons/icon-192.png", "/icons/icon-512.png", "/icons/apple-touch-icon.png",
   "/icons/favicon-32.png", "/icons/favicon-16.png", "/icons/favicon.svg"
 ];
