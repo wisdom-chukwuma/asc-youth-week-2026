@@ -2,6 +2,14 @@
 
 10-15 minutes, no coding needed. Two parts: Firebase (the live backend) and hosting (the link you'll share).
 
+> ⚠️ **Once Youth Week is live, never run `firestore:delete` (or any bulk
+> collection wipe) against this project without explicitly confirming
+> with a human first, collection by collection, even if it "should" only
+> be test data.** This exact mistake deleted 11 real people's real
+> profiles on Day 1 (2026-09-14) — data that only came back because of a
+> narrow, time-limited recovery, not because it was actually safe to
+> assume. Once the event is truly over, this warning can be removed.
+
 ## 1. Create the Firebase project
 
 1. Go to https://console.firebase.google.com → **Add project** → name it (e.g. `asc-youth-week-2026`) → skip Google Analytics (not needed) → Create.
