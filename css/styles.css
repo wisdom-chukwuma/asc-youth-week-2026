@@ -544,7 +544,8 @@ button, input, textarea {
 
 /* Skeleton shimmer while media loads, then fade in — the gallery mixes
    small app photos with much larger phone-camera/video-frame exports. */
-.photo-tile.is-loading {
+.photo-tile.is-loading,
+.board-signature.is-loading {
   background-image: linear-gradient(100deg, rgba(255,255,255,0.02) 30%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.02) 70%);
   background-size: 220% 100%;
   animation: tile-shimmer 1.6s ease-in-out infinite;
@@ -553,13 +554,13 @@ button, input, textarea {
   0% { background-position: 140% 0; }
   100% { background-position: -80% 0; }
 }
-.photo-tile img,
-.photo-tile video { opacity: 0; transition: opacity 0.35s ease; }
-.photo-tile img.is-loaded,
-.photo-tile video.is-loaded { opacity: 1; }
+.photo-tile img, .photo-tile video,
+.board-signature img { opacity: 0; transition: opacity 0.35s ease; }
+.photo-tile img.is-loaded, .photo-tile video.is-loaded,
+.board-signature img.is-loaded { opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
-  .photo-tile.is-loading { animation: none; }
-  .photo-tile img, .photo-tile video { transition: none; }
+  .photo-tile.is-loading, .board-signature.is-loading { animation: none; }
+  .photo-tile img, .photo-tile video, .board-signature img { transition: none; }
 }
 
 .shoutout-list { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
@@ -605,9 +606,58 @@ button, input, textarea {
 }
 .signature-actions { display: flex; gap: 10px; margin-top: 10px; }
 .signature-btn { padding: 11px 16px; font-size: 13.5px; }
-.signature-grid { grid-template-columns: repeat(4, 1fr); }
-.signature-grid .photo-tile { background: rgba(255, 255, 255, 0.03); }
-.signature-grid .photo-tile img { object-fit: contain; }
+
+/* One shared board, not a grid of separate cards — a plaque everyone
+   signs onto together, like a physical guestbook poster. */
+.board-frame {
+  position: relative;
+  margin: 4px 0 16px 0;
+  padding: 18px 16px 16px;
+  border-radius: var(--radius-md);
+  background:
+    radial-gradient(ellipse 120% 80% at 50% 0%, rgba(244, 185, 66, 0.05), transparent 60%),
+    rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(244, 185, 66, 0.3);
+  box-shadow: 0 0 0 1px rgba(244, 185, 66, 0.08) inset, 0 18px 40px -22px rgba(0, 0, 0, 0.6);
+}
+.board-frame-head {
+  text-align: center;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(244, 185, 66, 0.25);
+}
+.board-frame-title {
+  display: block;
+  font-family: "Cinzel", serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gold-soft);
+  letter-spacing: 0.02em;
+}
+.board-frame-sub {
+  display: block;
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.board-signatures {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2px 4px;
+  min-height: 48px;
+}
+.board-signature {
+  width: 88px;
+  height: 40px;
+  flex-shrink: 0;
+}
+.board-signature img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.board-empty { text-align: center; margin: 6px 0 0 0; }
+.board-empty[hidden] { display: none; }
 
 /* ---------- Event gallery ---------- */
 

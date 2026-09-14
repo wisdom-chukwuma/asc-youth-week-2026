@@ -89,20 +89,25 @@ export function initSignatureBoard() {
     }
   });
 
-  const q = query(collection(db, "signatures"), orderBy("createdAt", "desc"), limit(60));
+  const emptyMsg = document.getElementById("signature-board-empty");
+
+  // Oldest-first — signers fill the board in the order they signed,
+  // like a real guestbook, rather than newest-first jumping around.
+  const q = query(collection(db, "signatures"), orderBy("createdAt", "asc"), limit(300));
   onSnapshot(q, (snap) => {
+    if (emptyMsg) emptyMsg.hidden = snap.size > 0;
     applyDocChanges(grid, snap.docChanges(), (docSnap) => {
       const s = docSnap.data();
-      const tile = document.createElement("div");
-      tile.className = "photo-tile";
-      tile.dataset.id = docSnap.id;
+      const mark = document.createElement("div");
+      mark.className = "board-signature";
+      mark.dataset.id = docSnap.id;
       const img = document.createElement("img");
-      markLoading(tile, img);
+      markLoading(mark, img);
       img.loading = "lazy";
       img.alt = s.nickname ? `${s.nickname}'s signature` : "Signature";
       img.src = s.url;
-      tile.appendChild(img);
-      return tile;
+      mark.appendChild(img);
+      return mark;
     });
   });
 }

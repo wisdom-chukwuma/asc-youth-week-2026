@@ -163,14 +163,23 @@
 
     <div class="glass card">
       <span class="eyebrow">Signature Board</span>
-      <p class="hint">Leave your mark on Youth Week 2026 — draw your signature below.</p>
+      <p class="hint">One board for the whole church — sign once, and your name stays on it all week.</p>
+
+      <div class="board-frame">
+        <div class="board-frame-head">
+          <span class="board-frame-title">Worship The King</span>
+          <span class="board-frame-sub">Youth Week 2026 · Signed by all of us</span>
+        </div>
+        <div id="signature-grid" class="board-signatures"></div>
+        <p id="signature-board-empty" class="hint board-empty">Be the first to sign the board.</p>
+      </div>
+
+      <p id="signature-status" class="hint"></p>
       <canvas id="signature-canvas" class="signature-canvas" width="600" height="220"></canvas>
       <div class="signature-actions">
         <button id="signature-clear" class="btn btn-outline signature-btn" type="button">Clear</button>
-        <button id="signature-save" class="btn btn-gold signature-btn" type="button">Sign the board</button>
+        <button id="signature-save" class="btn btn-gold signature-btn" type="button">Add my signature</button>
       </div>
-      <p id="signature-status" class="hint"></p>
-      <div id="signature-grid" class="photo-grid signature-grid"></div>
     </div>
 
     <div class="glass card">
