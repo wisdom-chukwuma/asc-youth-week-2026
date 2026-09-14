@@ -60,5 +60,14 @@ service cloud.firestore {
       allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
       allow update, delete: if false;
     }
+
+    // Official day-by-day event gallery — curated, not participant
+    // uploads. Written only via an authenticated admin script (bypasses
+    // these rules entirely, same as the Firebase Console); the app
+    // itself only ever reads this collection.
+    match /gallery/{id} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
   }
 }

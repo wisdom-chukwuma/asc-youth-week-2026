@@ -19,5 +19,13 @@ service firebase.storage {
                    && request.resource.size < 2 * 1024 * 1024
                    && request.resource.contentType.matches('image/.*');
     }
+    // Official gallery — public read (plain <img>/<video> tags), no
+    // client write path at all. Uploaded only via an authenticated
+    // admin script, which bypasses Storage rules the same way the
+    // Firebase Console does.
+    match /gallery/{day}/{fileName} {
+      allow read: if true;
+      allow write: if false;
+    }
   }
 }

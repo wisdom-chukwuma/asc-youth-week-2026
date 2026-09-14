@@ -1,9 +1,11 @@
 import {
-  db, storage, doc, updateDoc, addDoc, collection, query, where, orderBy, limit,
+  db, storage, doc, updateDoc, addDoc, collection, query, orderBy, limit,
   onSnapshot, ref, uploadBytes, getDownloadURL, serverTimestamp, increment
 } from "./firebase-config.js";
 import { POINTS, todaySchedule } from "./data.js";
 import { state, showToast, applyDocChanges } from "./state.js";
+import { postComment, subscribeComments } from "./comments.js";
+import { openLightbox } from "./lightbox.js";
 
 async function compressImage(file, maxDim = 1600, quality = 0.8) {
   const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
@@ -21,67 +23,6 @@ async function compressImage(file, maxDim = 1600, quality = 0.8) {
   return await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", quality));
 }
 
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
-
-async function postComment(parentType, parentId, text, statusEl) {
-  if (!state.uid || !state.profile) return false;
-  const day = todaySchedule()?.day || 0;
-  const dayCount = state.profile.commentCounts?.[day] || 0;
-  if (dayCount >= POINTS.commentDailyCap) {
-    if (statusEl) statusEl.textContent = `You've hit today's comment limit (${POINTS.commentDailyCap}) — thank you!`;
-    return false;
-  }
-  try {
-    await addDoc(collection(db, "comments"), {
-      uid: state.uid, nickname: state.profile.nickname, parentType, parentId, text,
-      createdAt: serverTimestamp()
-    });
-    await updateDoc(doc(db, "profiles", state.uid), {
-      points: increment(POINTS.comment),
-      [`commentCounts.${day}`]: increment(1)
-    });
-    showToast(`+${POINTS.comment} pts — comment posted`);
-    return true;
-  } catch (e) {
-    if (statusEl) statusEl.textContent = "Couldn't post — try again.";
-    return false;
-  }
-}
-
-function renderCommentList(container, comments) {
-  container.innerHTML = "";
-  if (!comments.length) {
-    const empty = document.createElement("p");
-    empty.className = "hint comment-empty";
-    empty.textContent = "No comments yet — be the first.";
-    container.appendChild(empty);
-    return;
-  }
-  comments.forEach((c) => {
-    const p = document.createElement("p");
-    p.className = "comment-item";
-    p.innerHTML = `<strong>${escapeHtml(c.nickname)}</strong> ${escapeHtml(c.text)}`;
-    container.appendChild(p);
-  });
-}
-
-function subscribeComments(parentType, parentId, listEl) {
-  const q = query(
-    collection(db, "comments"),
-    where("parentType", "==", parentType),
-    where("parentId", "==", parentId),
-    orderBy("createdAt", "asc"),
-    limit(100)
-  );
-  return onSnapshot(q, (snap) => {
-    renderCommentList(listEl, snap.docs.map((d) => d.data()));
-  });
-}
-
 export function initWall() {
   const fileInput = document.getElementById("photo-upload-input");
   const uploadStatus = document.getElementById("photo-upload-status");
@@ -91,43 +32,6 @@ export function initWall() {
   const shoutoutSubmit = document.getElementById("shoutout-submit");
   const shoutoutStatus = document.getElementById("shoutout-status");
   const shoutoutList = document.getElementById("shoutout-list");
-
-  const lightbox = document.getElementById("photo-lightbox");
-  const lightboxImg = document.getElementById("lightbox-img");
-  const lightboxMeta = document.getElementById("lightbox-meta");
-  const lightboxComments = document.getElementById("lightbox-comments");
-  const lightboxInput = document.getElementById("lightbox-comment-input");
-  const lightboxSubmit = document.getElementById("lightbox-comment-submit");
-  const lightboxClose = document.getElementById("lightbox-close");
-  let lightboxUnsub = null;
-  let lightboxPhotoId = null;
-
-  function closeLightbox() {
-    if (lightboxUnsub) { lightboxUnsub(); lightboxUnsub = null; }
-    lightbox.hidden = true;
-    lightboxPhotoId = null;
-  }
-  function openLightbox(photoDoc) {
-    const p = photoDoc.data();
-    lightboxPhotoId = photoDoc.id;
-    lightboxImg.src = p.url;
-    lightboxImg.alt = p.nickname ? `Photo from ${p.nickname}` : "Youth Week photo";
-    lightboxMeta.textContent = p.nickname ? `Posted by ${p.nickname}` : "Youth Week 2026";
-    lightboxInput.value = "";
-    if (lightboxUnsub) lightboxUnsub();
-    lightboxUnsub = subscribeComments("photo", photoDoc.id, lightboxComments);
-    lightbox.hidden = false;
-  }
-  lightboxClose.addEventListener("click", closeLightbox);
-  lightbox.addEventListener("click", (e) => { if (e.target === lightbox) closeLightbox(); });
-  lightboxSubmit.addEventListener("click", async () => {
-    const text = lightboxInput.value.trim();
-    if (!text || !lightboxPhotoId) { if (!text) showToast("Write something first"); return; }
-    lightboxSubmit.disabled = true;
-    const ok = await postComment("photo", lightboxPhotoId, text);
-    if (ok) lightboxInput.value = "";
-    lightboxSubmit.disabled = false;
-  });
 
   const photosQuery = query(collection(db, "photos"), orderBy("createdAt", "desc"), limit(60));
   onSnapshot(photosQuery, (snap) => {
@@ -141,7 +45,11 @@ export function initWall() {
       img.loading = "lazy";
       img.alt = p.nickname ? `Photo from ${p.nickname}` : "Youth Week photo";
       tile.appendChild(img);
-      tile.addEventListener("click", () => openLightbox(docSnap));
+      tile.addEventListener("click", () => openLightbox({
+        type: "image", url: p.url,
+        metaText: p.nickname ? `Posted by ${p.nickname}` : "Youth Week 2026",
+        parentType: "photo", parentId: docSnap.id
+      }));
       return tile;
     });
   });

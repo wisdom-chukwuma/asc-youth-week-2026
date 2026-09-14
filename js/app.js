@@ -8,6 +8,8 @@ import { initEngage } from "./engage.js";
 import { initBoard } from "./board.js";
 import { initWall } from "./wall.js";
 import { initSignatureBoard } from "./signature.js";
+import { initGallery } from "./gallery.js";
+import { initLightbox } from "./lightbox.js";
 import { shareDayCard } from "./card.js";
 import { initNotifications } from "./notifications.js";
 import { initInstallBanner } from "./install-banner.js";
@@ -326,7 +328,9 @@ async function main() {
 
   initEngage();
   initBoard();
+  initLightbox();
   initWall();
+  initGallery();
   initSignatureBoard();
   initNotifications();
   initInstallBanner();
