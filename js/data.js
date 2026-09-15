@@ -23,6 +23,7 @@ export const SCHEDULE = [
       {
         title: "Theme Expository",
         blurb: "Discovering truth through the word",
+        icon: "book-open",
         start: "2026-09-14T18:00:00+01:00",
         end: "2026-09-14T20:00:00+01:00"
       }
@@ -37,6 +38,7 @@ export const SCHEDULE = [
       {
         title: "Bible Study",
         blurb: "Exploring God's Word together",
+        icon: "cross",
         start: "2026-09-15T18:00:00+01:00",
         end: "2026-09-15T20:00:00+01:00"
       }
@@ -51,6 +53,7 @@ export const SCHEDULE = [
       {
         title: "Purpose Meets Profession",
         blurb: "Lessons for Impactful Living",
+        icon: "briefcase",
         start: "2026-09-16T18:00:00+01:00",
         end: "2026-09-16T20:00:00+01:00"
       }
@@ -65,12 +68,14 @@ export const SCHEDULE = [
       {
         title: "Ignite Thy Spirit",
         blurb: "A night of Revival",
+        icon: "fire",
         start: "2026-09-17T17:00:00+01:00",
         end: "2026-09-17T20:00:00+01:00"
       },
       {
         title: "Praise Unleashed",
         blurb: "Worship the King",
+        icon: "music-notes",
         start: "2026-09-17T17:00:00+01:00",
         end: "2026-09-17T20:00:00+01:00"
       }
@@ -85,12 +90,14 @@ export const SCHEDULE = [
       {
         title: "Fit For Purpose",
         blurb: "Building Healthy Lives",
+        icon: "sun",
         start: "2026-09-19T09:00:00+01:00",
         end: "2026-09-19T12:00:00+01:00"
       },
       {
         title: "The Spotlight Experience",
         blurb: "Kingdom Creatives",
+        icon: "bell",
         start: "2026-09-19T17:00:00+01:00",
         end: "2026-09-19T20:00:00+01:00"
       }
@@ -105,6 +112,7 @@ export const SCHEDULE = [
       {
         title: "Youth Harvest Thanksgiving",
         blurb: "Bringing our best before the King",
+        icon: "grains",
         start: "2026-09-20T08:00:00+01:00",
         end: "2026-09-20T12:00:00+01:00"
       }
@@ -149,10 +157,10 @@ export const ENGAGE = {
 };
 
 export const SQUADS = [
-  { id: "crown", name: "Crown", initial: "C", color: "#F4B942" },
-  { id: "throne", name: "Throne", initial: "T", color: "#E85D75" },
-  { id: "altar", name: "Altar", initial: "A", color: "#5DB3E8" },
-  { id: "sanctuary", name: "Sanctuary", initial: "S", color: "#7DDE92" }
+  { id: "crown", name: "Crown", icon: "crown", color: "#F4B942" },
+  { id: "throne", name: "Throne", icon: "sword", color: "#E85D75" },
+  { id: "altar", name: "Altar", icon: "fire", color: "#5DB3E8" },
+  { id: "sanctuary", name: "Sanctuary", icon: "bird", color: "#7DDE92" }
 ];
 
 export const POINTS = {

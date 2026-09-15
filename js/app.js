@@ -85,7 +85,7 @@ function showOnboarding() { el.onboarding.hidden = false; }
 function hideOnboarding() { el.onboarding.hidden = true; }
 
 function showSquadReveal(squad) {
-  el.squadRevealBadge.textContent = squad.initial;
+  el.squadRevealBadge.innerHTML = `<i class="ph ph-${squad.icon}"></i>`;
   el.squadRevealBadge.style.background = squad.color;
   el.squadRevealName.textContent = `Team ${squad.name}`;
   el.squadRevealName.style.color = squad.color;
@@ -290,6 +290,7 @@ function renderSchedule() {
       const start = new Date(s.start);
       const end = new Date(s.end);
       return `<div class="session-row">
+        <span class="session-icon"><i class="ph ph-${s.icon}"></i></span>
         <div class="session-info">
           <p class="session-title">${s.title}</p>
           <p class="session-blurb">${s.blurb}</p>

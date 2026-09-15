@@ -25,7 +25,7 @@ export function initBoard() {
       const row = document.createElement("div");
       row.className = "squad-bar-row";
       row.innerHTML =
-        `<div class="squad-bar-label"><span class="squad-badge squad-badge-sm" style="background:${s.color}">${s.initial}</span><span>${s.name}</span>` +
+        `<div class="squad-bar-label"><span class="squad-badge squad-badge-sm" style="background:${s.color}"><i class="ph ph-${s.icon}"></i></span><span>${s.name}</span>` +
         `<span class="squad-bar-points">${pts} pts</span></div>` +
         `<div class="squad-bar-track"><div class="squad-bar-fill" style="width:${(pts / maxPts) * 100}%;background:${s.color}"></div></div>`;
       squadListEl.appendChild(row);

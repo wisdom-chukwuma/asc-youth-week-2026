@@ -106,8 +106,8 @@ export async function initLikeButtonStatic(btnEl, parentType, parentId, parentCo
   });
 }
 
-const HEART_SVG = '<svg viewBox="0 0 24 24" class="like-icon"><path d="M12 20.5s-6.9-4.35-9.5-8.5C.9 9 1.9 4.9 5.6 4c2.2-.5 4 .6 5 2.1C11.6 4.6 13.4 3.5 15.6 4c3.7.9 4.7 5 2.1 8-2.6 4.15-9.5 8.5-9.5 8.5z"/></svg>';
+const HEART_ICONS = '<i class="ph ph-heart like-icon like-icon-outline"></i><i class="ph-fill ph-heart like-icon like-icon-fill"></i>';
 
 export function likeButtonHtml() {
-  return `<button type="button" class="like-btn">${HEART_SVG}<span class="like-count">0</span></button>`;
+  return `<button type="button" class="like-btn">${HEART_ICONS}<span class="like-count">0</span></button>`;
 }

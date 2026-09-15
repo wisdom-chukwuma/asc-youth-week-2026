@@ -20,6 +20,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" rel="stylesheet" />
+<link href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" rel="stylesheet" />
 <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -31,7 +33,7 @@
     <span id="install-banner-sub">Add it to your home screen for one-tap access all week.</span>
   </span>
   <button id="install-banner-action" class="install-banner-action" type="button" hidden>Install</button>
-  <button id="install-banner-dismiss" class="install-banner-dismiss" type="button" aria-label="Dismiss">✕</button>
+  <button id="install-banner-dismiss" class="install-banner-dismiss" type="button" aria-label="Dismiss"><i class="ph ph-x"></i></button>
 </div>
 
 <div id="onboarding" class="modal-overlay" hidden>
@@ -89,15 +91,11 @@
 
     <div class="action-row">
       <button id="share-card-btn" class="action-tile" type="button">
-        <span class="action-tile-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M18 8a3 3 0 1 0-2.83-4H15a3 3 0 0 0 .09 4.26L8.9 11.7a3 3 0 1 0 0 4.6l6.19 3.44A3 3 0 1 0 16 17a3 3 0 0 0-.09.7L9.72 14.3a3 3 0 0 0 0-4.6L15.91 6.3c.32.24.68.42 1.09.53"/></svg>
-        </span>
+        <i class="ph ph-share-network action-tile-icon" aria-hidden="true"></i>
         <span class="action-tile-label">Share today's card</span>
       </button>
       <button id="notif-btn" class="action-tile" type="button" hidden>
-        <span class="action-tile-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 0 0-5 5v3.2c0 .5-.2 1-.5 1.4L5 14.5c-.6.8 0 2 1 2h12c1 0 1.6-1.2 1-2l-1.5-2c-.3-.4-.5-.9-.5-1.4V8a5 5 0 0 0-5-5zM9.5 18a2.5 2.5 0 0 0 5 0"/></svg>
-        </span>
+        <i class="ph ph-bell action-tile-icon" aria-hidden="true"></i>
         <span class="action-tile-label">Get notified before each session</span>
       </button>
     </div>
@@ -152,10 +150,12 @@
     </div>
 
     <div id="wallsub-gallery" class="wall-subsection">
-      <div class="reel-shell">
+      <div class="glass card">
+        <span class="eyebrow">Event Gallery</span>
+        <p class="hint">Official photos and clips, posted daily. Tap any tile to watch.</p>
         <div id="gallery-day-pills" class="reel-day-pills"></div>
-        <div id="gallery-reel" class="reel-feed"></div>
-        <p id="gallery-empty" class="hint reel-empty" hidden>No highlights posted for this day yet.</p>
+        <div id="gallery-grid" class="photo-grid"></div>
+        <p id="gallery-empty" class="hint" hidden>No highlights posted for this day yet.</p>
       </div>
     </div>
 
@@ -205,15 +205,23 @@
     </div>
   </section>
 
+  <div id="reel-overlay" class="reel-overlay" hidden>
+    <button id="reel-back-btn" class="reel-back-btn" type="button" aria-label="Back to gallery">
+      <i class="ph ph-arrow-left"></i>
+    </button>
+    <div id="reel-feed" class="reel-feed"></div>
+  </div>
+
   <div id="photo-lightbox" class="modal-overlay" hidden>
     <div class="glass modal lightbox-modal">
-      <button id="lightbox-close" class="lightbox-close" type="button" aria-label="Close">✕</button>
+      <button id="lightbox-close" class="lightbox-close" type="button" aria-label="Close"><i class="ph ph-x"></i></button>
       <img id="lightbox-img" class="lightbox-img" src="" alt="" />
       <video id="lightbox-video" class="lightbox-img" hidden></video>
       <div class="lightbox-actions">
         <p id="lightbox-meta" class="lightbox-meta"></p>
         <button id="lightbox-like-btn" type="button" class="like-btn">
-          <svg viewBox="0 0 24 24" class="like-icon"><path d="M12 20.5s-6.9-4.35-9.5-8.5C.9 9 1.9 4.9 5.6 4c2.2-.5 4 .6 5 2.1C11.6 4.6 13.4 3.5 15.6 4c3.7.9 4.7 5 2.1 8-2.6 4.15-9.5 8.5-9.5 8.5z"/></svg>
+          <i class="ph ph-heart like-icon like-icon-outline"></i>
+          <i class="ph-fill ph-heart like-icon like-icon-fill"></i>
           <span class="like-count">0</span>
         </button>
       </div>
@@ -229,23 +237,23 @@
 
 <nav class="tabbar glass">
   <button class="tab-btn is-active" data-tab="home" type="button">
-    <svg viewBox="0 0 24 24" class="tab-icon"><path d="M4 11.5 12 4l8 7.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg>
+    <i class="ph ph-house tab-icon"></i>
     <span>Home</span>
   </button>
   <button class="tab-btn" data-tab="schedule" type="button">
-    <svg viewBox="0 0 24 24" class="tab-icon"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 9.5h16M8 3v3.5M16 3v3.5" stroke-width="1.6" fill="none" stroke="currentColor"/></svg>
+    <i class="ph ph-calendar-blank tab-icon"></i>
     <span>Schedule</span>
   </button>
   <button class="tab-btn" data-tab="engage" type="button">
-    <svg viewBox="0 0 24 24" class="tab-icon"><path d="M4 5h16v10H9l-4 4v-4H4z"/></svg>
+    <i class="ph ph-chats tab-icon"></i>
     <span>Engage</span>
   </button>
   <button class="tab-btn" data-tab="board" type="button">
-    <svg viewBox="0 0 24 24" class="tab-icon"><rect x="4" y="12" width="4" height="8"/><rect x="10" y="7" width="4" height="13"/><rect x="16" y="3" width="4" height="17"/></svg>
+    <i class="ph ph-chart-bar tab-icon"></i>
     <span>Board</span>
   </button>
   <button class="tab-btn" data-tab="wall" type="button">
-    <svg viewBox="0 0 24 24" class="tab-icon"><rect x="3" y="4" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m4 16 4.5-4.5 3 3L17 9l3 4.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+    <i class="ph ph-images tab-icon"></i>
     <span>Wall</span>
   </button>
 </nav>

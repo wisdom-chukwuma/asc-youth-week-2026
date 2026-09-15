@@ -171,11 +171,7 @@ button, input, textarea {
   cursor: pointer;
   transition: color 0.15s ease, background 0.15s ease;
 }
-.tab-icon {
-  width: 21px;
-  height: 21px;
-  fill: currentColor;
-}
+.tab-icon { font-size: 21px; line-height: 1; }
 .tab-btn.is-active {
   color: var(--gold);
   background: rgba(244, 185, 66, 0.12);
@@ -296,13 +292,11 @@ button, input, textarea {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  font-family: "Cinzel", serif;
-  font-weight: 700;
   color: #1c0f36;
   flex-shrink: 0;
 }
-.squad-badge-lg { width: 64px; height: 64px; font-size: 26px; margin: 0 auto 10px; }
-.squad-badge-sm { width: 22px; height: 22px; font-size: 11px; }
+.squad-badge-lg { width: 68px; height: 68px; font-size: 32px; margin: 0 auto 10px; }
+.squad-badge-sm { width: 24px; height: 24px; font-size: 13px; }
 
 /* ---------- Home tab ---------- */
 
@@ -369,20 +363,7 @@ button, input, textarea {
 }
 .action-tile:active { transform: scale(0.98); }
 .action-tile:disabled { opacity: 0.5; }
-.action-tile-icon {
-  width: 26px;
-  height: 26px;
-  display: flex;
-}
-.action-tile-icon svg {
-  width: 100%;
-  height: 100%;
-  fill: none;
-  stroke: var(--gold-soft);
-  stroke-width: 1.6;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-}
+.action-tile-icon { font-size: 24px; line-height: 1; color: var(--gold-soft); }
 .action-tile-label { font-size: 12.5px; font-weight: 600; line-height: 1.35; }
 
 /* ---------- Install banner ---------- */
@@ -462,16 +443,28 @@ button, input, textarea {
 
 .session-row {
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  align-items: center;
+  gap: 12px;
   padding: 8px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 .session-row:first-of-type { border-top: none; }
-.session-info { min-width: 0; }
+.session-icon {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+  color: #1c0f36;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.session-info { flex: 1; min-width: 0; }
 .session-title { font-size: 14.5px; font-weight: 700; margin: 0; }
 .session-blurb { font-size: 12.5px; color: var(--ink-dim); margin: 2px 0 0 0; }
-.session-time { font-size: 11.5px; color: var(--gold-soft); white-space: nowrap; font-weight: 700; }
+.session-time { flex-shrink: 0; font-size: 11.5px; color: var(--gold-soft); white-space: nowrap; font-weight: 700; }
 
 /* ---------- Engage tab ---------- */
 
@@ -697,17 +690,25 @@ button, input, textarea {
 }
 .wall-subsection[hidden] { display: none; }
 
-/* ---------- Event gallery: vertical reel feed ---------- */
+/* ---------- Event gallery: grid + full-screen reel ---------- */
 
-.reel-shell {
-  position: relative;
-  margin: 0 -16px;
-}
 .reel-day-pills {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding: 0 16px 10px;
+  margin: 10px 0 4px 0;
+  padding-bottom: 2px;
+}
+.gallery-grid-tile { position: relative; }
+.gallery-grid-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 26px;
+  color: rgba(255, 255, 255, 0.92);
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
+  pointer-events: none;
 }
 .gallery-pill {
   flex-shrink: 0;
@@ -727,26 +728,47 @@ button, input, textarea {
 }
 .gallery-pill:disabled { opacity: 0.35; cursor: default; }
 
+.reel-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: #000;
+}
+.reel-overlay[hidden] { display: none; }
+.reel-back-btn {
+  position: absolute;
+  top: calc(14px + env(safe-area-inset-top));
+  left: 14px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(10, 4, 24, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+}
+
 .reel-feed {
-  height: calc(100dvh - 320px);
-  min-height: 380px;
+  height: 100%;
+  height: 100dvh;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
-  padding: 0 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
 }
 .reel-item {
   position: relative;
-  flex-shrink: 0;
   scroll-snap-align: start;
   scroll-snap-stop: always;
-  height: 100%;
-  border-radius: var(--radius-lg);
+  height: 100dvh;
+  width: 100%;
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.3);
+  background: #000;
 }
 .reel-media { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.35s ease; }
 .reel-media.is-loaded { opacity: 1; }
@@ -776,6 +798,50 @@ button, input, textarea {
   backdrop-filter: blur(6px);
 }
 
+.reel-mute-badge {
+  position: absolute;
+  top: 58px;
+  right: 14px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(10, 4, 24, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+  opacity: 0.85;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.reel-mute-badge.is-flash { transform: scale(1.25); opacity: 1; }
+
+.reel-heart-burst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 90px;
+  color: #fff;
+  filter: drop-shadow(0 4px 14px rgba(0,0,0,0.5));
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.6);
+  pointer-events: none;
+  z-index: 2;
+}
+.reel-heart-burst.is-bursting { animation: heart-burst 0.75s ease-out; }
+@keyframes heart-burst {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+  25% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+  40% { transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reel-heart-burst.is-bursting { animation: none; opacity: 0; }
+}
+
 .reel-bottom {
   position: absolute;
   left: 0;
@@ -789,7 +855,19 @@ button, input, textarea {
   gap: 10px;
 }
 .reel-day-label { font-size: 12.5px; font-weight: 700; color: var(--ink); }
-.reel-actions { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+
+/* Floats independently of the bottom caption, at real thumb height
+   (roughly where a right-hand grip naturally rests) rather than pinned
+   to the very bottom edge. */
+.reel-actions {
+  position: absolute;
+  right: 14px;
+  bottom: 130px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
 .reel-actions .like-btn,
 .reel-actions .reel-comment-btn {
   flex-direction: column;
@@ -803,10 +881,36 @@ button, input, textarea {
   cursor: pointer;
   text-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
-.reel-actions .like-icon { width: 24px; height: 24px; stroke-width: 1.6; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); }
-.reel-comment-icon { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; }
+.reel-actions .like-icon { font-size: 24px; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); }
+.reel-comment-icon { font-size: 24px; line-height: 1; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); }
 
-.reel-empty { text-align: center; padding: 30px 0; }
+.reel-comment-drawer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 62%;
+  display: flex;
+  flex-direction: column;
+  background: rgba(12, 6, 26, 0.94);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(244, 185, 66, 0.3);
+  border-radius: 20px 20px 0 0;
+  padding: 14px 14px calc(14px + env(safe-area-inset-bottom));
+  z-index: 3;
+}
+.reel-comment-drawer[hidden] { display: none; }
+.reel-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.reel-drawer-close { background: none; border: none; color: var(--ink-dim); font-size: 16px; cursor: pointer; padding: 4px; }
+.reel-drawer-list { flex: 1; min-height: 60px; }
 
 /* ---------- Comments ---------- */
 
@@ -866,16 +970,10 @@ button, input, textarea {
 .like-btn.is-liked { border-color: rgba(232, 93, 117, 0.5); color: var(--ink); }
 .like-btn:active { transform: scale(0.96); }
 .like-btn:disabled { opacity: 0.45; cursor: default; }
-.like-icon {
-  width: 15px;
-  height: 15px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linejoin: round;
-  flex-shrink: 0;
-}
-.like-btn.is-liked .like-icon { fill: var(--danger); stroke: var(--danger); }
+.like-icon { font-size: 15px; line-height: 1; flex-shrink: 0; }
+.like-icon-fill { display: none; color: var(--danger); }
+.like-btn.is-liked .like-icon-outline { display: none; }
+.like-btn.is-liked .like-icon-fill { display: inline; }
 .like-count { font-variant-numeric: tabular-nums; }
 
 .shoutout-actions { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
