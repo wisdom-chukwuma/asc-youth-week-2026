@@ -582,6 +582,15 @@ button, input, textarea {
 .rank-row:first-child { border-top: none; }
 .rank-pos { width: 22px; font-weight: 800; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
 .rank-row.is-top3 .rank-pos { color: var(--gold); }
+.rank-row.is-me {
+  background: rgba(244, 185, 66, 0.1);
+  border-radius: 10px;
+  border-top-color: transparent;
+  margin: 2px 0;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+.rank-row.is-me .rank-name { color: var(--gold-soft); }
 .rank-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
 .rank-squad-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .rank-pts { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--gold-soft); font-size: 13px; }

@@ -36,8 +36,10 @@ export function initBoard() {
     listEl.innerHTML = "";
     let meRank = null;
     let meScore = null;
-    const top20 = rankedDocs.slice(0, 20);
-    top20.forEach((docSnap, i) => {
+    // Everyone, not just a top slice — with a few dozen people signed up
+    // this week, capping the list just hid most people from ever seeing
+    // where they stand.
+    rankedDocs.forEach((docSnap, i) => {
       const rank = i + 1;
       const p = docSnap.data();
       const isMe = docSnap.id === state.uid;
@@ -56,9 +58,9 @@ export function initBoard() {
     if (!state.profile) {
       meRankEl.textContent = "";
     } else if (meRank) {
-      meRankEl.textContent = `You're #${meRank} with ${meScore} pts`;
+      meRankEl.textContent = `You're #${meRank} of ${rankedDocs.length} with ${meScore} pts`;
     } else {
-      meRankEl.textContent = `You: ${state.profile.points || 0} pts — climb into the top 20!`;
+      meRankEl.textContent = `You: ${state.profile.points || 0} pts`;
     }
   }
 

@@ -194,7 +194,7 @@ export const QUIZ = {
 
 export const SQUADS = [
   { id: "crown", name: "Crown", icon: "crown", color: "#F4B942" },
-  { id: "throne", name: "Throne", icon: "sword", color: "#E85D75" },
+  { id: "throne", name: "Throne", icon: "shield", color: "#E85D75" },
   { id: "altar", name: "Altar", icon: "fire", color: "#5DB3E8" },
   { id: "sanctuary", name: "Sanctuary", icon: "bird", color: "#7DDE92" }
 ];
