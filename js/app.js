@@ -1,8 +1,8 @@
 import {
   db, whenReady, doc, getDoc, setDoc, onSnapshot, runTransaction,
-  serverTimestamp, increment, arrayUnion
+  serverTimestamp, increment, arrayUnion, collection, query, where, getCountFromServer
 } from "./firebase-config.js";
-import { SCHEDULE, POINTS, squadFor, todaySchedule, nextSession } from "./data.js";
+import { SCHEDULE, POINTS, SQUADS, squadById, todaySchedule, nextSession } from "./data.js";
 import { state, setProfile, onProfileChange, showToast } from "./state.js";
 import { initEngage } from "./engage.js";
 import { initBoard } from "./board.js";
@@ -95,6 +95,30 @@ function showSquadReveal(squad) {
   openOverlay("squadReveal");
 }
 
+// Assigns whichever squad currently has the fewest members, rather than
+// hashing the uid — a hash mod 4 sounds even but a simple *31 polynomial
+// hash is badly skewed at mod 4 (31 ≡ -1 mod 4 degenerates it), which is
+// exactly how Crown ended up with half the church. Counting actual
+// membership self-corrects every signup instead of hoping a hash is fair.
+async function assignSquad() {
+  try {
+    const counts = await Promise.all(
+      SQUADS.map((s) => getCountFromServer(query(collection(db, "profiles"), where("squad", "==", s.id))))
+    );
+    let best = SQUADS[0];
+    let bestCount = Infinity;
+    SQUADS.forEach((s, i) => {
+      const c = counts[i].data().count;
+      if (c < bestCount) { bestCount = c; best = s; }
+    });
+    return best;
+  } catch (e) {
+    // Counting failed (offline, etc.) — still let them in rather than
+    // block onboarding; fall back to a random squad for this one signup.
+    return SQUADS[Math.floor(Math.random() * SQUADS.length)];
+  }
+}
+
 function wireOnboarding(authReadyPromise) {
   el.onboardingSubmit.addEventListener("click", async () => {
     const nickname = el.nicknameInput.value.trim();
@@ -107,7 +131,7 @@ function wireOnboarding(authReadyPromise) {
       // main() is waiting on rather than assuming state.uid is set.
       const user = await authReadyPromise;
       state.uid = user.uid;
-      const squad = squadFor(state.uid);
+      const squad = await assignSquad();
       const profileData = {
         nickname, squad: squad.id, points: 0,
         checkinDays: [], pollDays: [], reflectionDays: [],
@@ -149,7 +173,7 @@ function renderMeChip() {
   if (!state.profile) return;
   el.meName.textContent = state.profile.nickname;
   el.mePoints.textContent = `${state.profile.points || 0} pts`;
-  const squad = squadFor(state.uid);
+  const squad = squadById(state.profile.squad);
   el.meSquadDot.style.background = squad.color;
 }
 
@@ -239,7 +263,6 @@ async function handleCheckin() {
   const day = dayInfo.day;
   const checkinRef = doc(db, "checkins", `d${day}_${state.uid}`);
   const profileRef = doc(db, "profiles", state.uid);
-  const squadRef = doc(db, "squadTotals", state.profile.squad);
 
   el.checkinBtn.disabled = true;
   try {
@@ -251,7 +274,6 @@ async function handleCheckin() {
         squad: state.profile.squad, createdAt: serverTimestamp()
       });
       tx.update(profileRef, { points: increment(POINTS.checkin), checkinDays: arrayUnion(day) });
-      tx.set(squadRef, { squad: state.profile.squad, points: increment(POINTS.checkin) }, { merge: true });
     });
     showToast(`+${POINTS.checkin} pts — checked in for Day ${day}!`);
     maybeAwardWeekBonus();

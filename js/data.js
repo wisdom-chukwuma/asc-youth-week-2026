@@ -216,14 +216,8 @@ export const POINTS = {
   fullWeekBonus: 25
 };
 
-export function squadFor(id) {
-  // Deterministic hash so a device lands on the same squad every time,
-  // no coordination or account needed.
-  let h = 0;
-  for (let i = 0; i < id.length; i++) {
-    h = (h * 31 + id.charCodeAt(i)) >>> 0;
-  }
-  return SQUADS[h % SQUADS.length];
+export function squadById(id) {
+  return SQUADS.find((s) => s.id === id) || SQUADS[0];
 }
 
 export function todaySchedule(now = new Date()) {

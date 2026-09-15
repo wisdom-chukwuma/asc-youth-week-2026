@@ -1,5 +1,5 @@
 import { db, collection, query, orderBy, limit, onSnapshot } from "./firebase-config.js";
-import { SQUADS } from "./data.js";
+import { SQUADS, squadById } from "./data.js";
 import { state } from "./state.js";
 
 function escapeHtml(str) {
@@ -13,9 +13,9 @@ export function initBoard() {
   const meRankEl = document.getElementById("board-me-rank");
   const listEl = document.getElementById("board-individual-list");
 
-  onSnapshot(collection(db, "squadTotals"), (snap) => {
+  function renderSquadBars(profiles) {
     const map = {};
-    snap.forEach((d) => { map[d.id] = d.data().points || 0; });
+    profiles.forEach((p) => { map[p.squad] = (map[p.squad] || 0) + (p.points || 0); });
     const maxPts = Math.max(1, ...SQUADS.map((s) => map[s.id] || 0));
     const ranked = SQUADS.slice().sort((a, b) => (map[b.id] || 0) - (map[a.id] || 0));
 
@@ -30,20 +30,19 @@ export function initBoard() {
         `<div class="squad-bar-track"><div class="squad-bar-fill" style="width:${(pts / maxPts) * 100}%;background:${s.color}"></div></div>`;
       squadListEl.appendChild(row);
     });
-  });
+  }
 
-  const topQuery = query(collection(db, "profiles"), orderBy("points", "desc"), limit(20));
-  onSnapshot(topQuery, (snap) => {
+  function renderIndividualList(rankedDocs) {
     listEl.innerHTML = "";
-    let rank = 0;
-    let meInTop = false;
-    let meScoreInTop = null;
-    snap.forEach((docSnap) => {
-      rank++;
+    let meRank = null;
+    let meScore = null;
+    const top20 = rankedDocs.slice(0, 20);
+    top20.forEach((docSnap, i) => {
+      const rank = i + 1;
       const p = docSnap.data();
       const isMe = docSnap.id === state.uid;
-      if (isMe) { meInTop = true; meScoreInTop = p.points || 0; }
-      const squad = SQUADS.find((s) => s.id === p.squad) || SQUADS[0];
+      if (isMe) { meRank = rank; meScore = p.points || 0; }
+      const squad = squadById(p.squad);
       const li = document.createElement("li");
       li.className = "rank-row" + (rank <= 3 ? " is-top3" : "") + (isMe ? " is-me" : "");
       li.innerHTML =
@@ -56,10 +55,23 @@ export function initBoard() {
 
     if (!state.profile) {
       meRankEl.textContent = "";
-    } else if (meInTop) {
-      meRankEl.textContent = `You're #${[...listEl.children].findIndex((li) => li.classList.contains("is-me")) + 1} with ${meScoreInTop} pts`;
+    } else if (meRank) {
+      meRankEl.textContent = `You're #${meRank} with ${meScore} pts`;
     } else {
       meRankEl.textContent = `You: ${state.profile.points || 0} pts — climb into the top 20!`;
     }
+  }
+
+  // A single live query over every profile (points-ordered) drives both
+  // the squad totals and the individual leaderboard, so there's no
+  // separate aggregate collection that can drift out of sync — that's
+  // exactly what happened to the old squadTotals collection, which only
+  // ever got touched by check-ins and silently ignored every other way
+  // to earn points.
+  const allQuery = query(collection(db, "profiles"), orderBy("points", "desc"), limit(500));
+  onSnapshot(allQuery, (snap) => {
+    const docs = snap.docs;
+    renderSquadBars(docs.map((d) => d.data()));
+    renderIndividualList(docs);
   });
 }

@@ -11,13 +11,6 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // Everyone can nudge squad totals up (increment-only in app code).
-    // Low-stakes honor system by design — see SETUP.md.
-    match /squadTotals/{squadId} {
-      allow read: if signedIn();
-      allow write: if signedIn();
-    }
-
     match /checkins/{id} {
       allow read: if signedIn();
       allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
@@ -43,8 +36,8 @@ service cloud.firestore {
     }
 
     // A like-count update may touch only that one field - keeps the
-    // "everyone can nudge a counter" honor-system pattern (see
-    // squadTotals above) from opening the door to editing anything else.
+    // "everyone can nudge a counter" honor-system pattern from opening
+    // the door to editing anything else.
     function likeCountOnly() {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly(["likeCount"]);
     }

@@ -33,7 +33,8 @@ import {
   runTransaction,
   serverTimestamp,
   increment,
-  arrayUnion
+  arrayUnion,
+  getCountFromServer
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 import {
   getStorage,
@@ -78,6 +79,7 @@ export {
   serverTimestamp,
   increment,
   arrayUnion,
+  getCountFromServer,
   signInAnonymously,
   onAuthStateChanged,
   ref,
