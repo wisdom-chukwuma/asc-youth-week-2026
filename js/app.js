@@ -13,6 +13,8 @@ import { initLightbox } from "./lightbox.js";
 import { shareDayCard } from "./card.js";
 import { initNotifications } from "./notifications.js";
 import { initInstallBanner } from "./install-banner.js";
+import { initNav, onNavChange, goToTab, openOverlay, closeOverlay } from "./nav.js";
+import { initQuests } from "./quests.js";
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
@@ -52,7 +54,7 @@ function cacheDom() {
     wall: document.getElementById("tab-wall") };
 }
 
-function switchTab(name) {
+function applyTab(name) {
   state.currentTab = name;
   Object.entries(el.tabs).forEach(([key, section]) => { section.hidden = key !== name; });
   el.tabBtns.forEach((btn) => btn.classList.toggle("is-active", btn.dataset.tab === name));
@@ -60,8 +62,8 @@ function switchTab(name) {
 }
 
 function wireTabs() {
-  el.tabBtns.forEach((btn) => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
-  el.meChip.addEventListener("click", () => switchTab("board"));
+  el.tabBtns.forEach((btn) => btn.addEventListener("click", () => goToTab(btn.dataset.tab)));
+  el.meChip.addEventListener("click", () => goToTab("board"));
 }
 
 function wireWallSubnav() {
@@ -90,6 +92,7 @@ function showSquadReveal(squad) {
   el.squadRevealName.textContent = `Team ${squad.name}`;
   el.squadRevealName.style.color = squad.color;
   el.squadReveal.hidden = false;
+  openOverlay("squadReveal");
 }
 
 function wireOnboarding(authReadyPromise) {
@@ -121,7 +124,7 @@ function wireOnboarding(authReadyPromise) {
       el.onboardingSubmit.textContent = "Enter Youth Week";
     }
   });
-  el.squadRevealClose.addEventListener("click", () => { el.squadReveal.hidden = true; });
+  el.squadRevealClose.addEventListener("click", () => closeOverlay());
 }
 
 function wireShareCard() {
@@ -325,6 +328,11 @@ async function resolveProfile() {
 
 async function main() {
   cacheDom();
+  initNav();
+  onNavChange((navState) => {
+    if (navState.tab) applyTab(navState.tab);
+    el.squadReveal.hidden = navState.overlay !== "squadReveal";
+  });
   wireTabs();
   wireWallSubnav();
   wireShareCard();
@@ -346,6 +354,7 @@ async function main() {
   state.uid = user.uid;
   await resolveProfile();
 
+  initQuests();
   initEngage();
   initBoard();
   initLightbox();

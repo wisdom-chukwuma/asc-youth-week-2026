@@ -156,6 +156,42 @@ export const ENGAGE = {
   }
 };
 
+// One general Bible-knowledge question per day, loosely themed to that
+// day's session — general knowledge on purpose, since the actual
+// teaching content isn't known ahead of the live session.
+export const QUIZ = {
+  1: {
+    question: "This week's theme verse, Psalm 84:7, says they go from strength to strength till each appears before God in…",
+    options: ["Zion", "Jericho", "Bethlehem", "Nazareth"],
+    correctIndex: 0
+  },
+  2: {
+    question: "Which of these is NOT one of the four Gospels?",
+    options: ["Mark", "Luke", "Acts", "John"],
+    correctIndex: 2
+  },
+  3: {
+    question: "“For I know the plans I have for you… plans to prosper you and not to harm you.” Which book is this from?",
+    options: ["Jeremiah", "Proverbs", "Psalms", "Isaiah"],
+    correctIndex: 0
+  },
+  4: {
+    question: "Complete the verse: “Let everything that has breath…”",
+    options: ["Praise the Lord", "Sing a new song", "Shout for joy", "Clap their hands"],
+    correctIndex: 0
+  },
+  5: {
+    question: "“Do you not know that your body is a temple of the…”",
+    options: ["Holy Spirit", "Lord", "Living God", "Most High"],
+    correctIndex: 0
+  },
+  6: {
+    question: "“Give thanks in all circumstances; for this is God's will for you in Christ…”",
+    options: ["Jesus", "our Lord", "the King", "our Savior"],
+    correctIndex: 0
+  }
+};
+
 export const SQUADS = [
   { id: "crown", name: "Crown", icon: "crown", color: "#F4B942" },
   { id: "throne", name: "Throne", icon: "sword", color: "#E85D75" },
@@ -174,6 +210,9 @@ export const POINTS = {
   signature: 5,
   comment: 2,
   commentDailyCap: 10,
+  like: 1,
+  likeDailyCap: 15,
+  quiz: 5,
   fullWeekBonus: 25
 };
 

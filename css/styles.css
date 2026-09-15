@@ -366,6 +366,53 @@ button, input, textarea {
 .action-tile-icon { font-size: 24px; line-height: 1; color: var(--gold-soft); }
 .action-tile-label { font-size: 12.5px; font-weight: 600; line-height: 1.35; }
 
+/* ---------- Today's quests ---------- */
+
+.quests-card { padding-bottom: 6px; }
+.quest-list { display: flex; flex-direction: column; }
+.quest-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 0;
+  border-top: 1px solid var(--glass-border);
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+}
+.quest-row:first-child { border-top: none; }
+.quest-row:disabled { cursor: default; }
+.quest-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(244, 185, 66, 0.14);
+  color: var(--gold-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+.quest-row.is-done .quest-icon { background: rgba(125, 222, 146, 0.16); color: #7dde92; }
+.quest-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.quest-row.is-done .quest-label { color: var(--ink-dim); }
+.quest-meta { flex-shrink: 0; display: flex; align-items: center; gap: 8px; }
+.quest-points { font-size: 12.5px; font-weight: 700; color: var(--gold-soft); }
+.quest-progress { font-size: 11px; font-weight: 600; color: var(--ink-dim); }
+.quest-check { font-size: 20px; color: #7dde92; }
+
 /* ---------- Install banner ---------- */
 
 .install-banner {
@@ -482,6 +529,18 @@ button, input, textarea {
   cursor: pointer;
 }
 .poll-option-btn:active { transform: scale(0.99); }
+.poll-option-btn:disabled { cursor: default; }
+
+.quiz-option-btn.is-correct {
+  background: rgba(125, 222, 146, 0.16);
+  border-color: rgba(125, 222, 146, 0.5);
+  color: #7dde92;
+}
+.quiz-option-btn.is-wrong {
+  background: rgba(232, 93, 117, 0.16);
+  border-color: rgba(232, 93, 117, 0.5);
+  color: #e85d75;
+}
 
 .poll-results { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
 .poll-result-row { font-size: 13px; }
@@ -698,7 +757,10 @@ button, input, textarea {
   overflow-x: auto;
   margin: 10px 0 4px 0;
   padding-bottom: 2px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.reel-day-pills::-webkit-scrollbar { display: none; }
 .gallery-grid-tile { position: relative; }
 .gallery-grid-play {
   position: absolute;
@@ -992,7 +1054,7 @@ button, input, textarea {
   border-radius: 999px;
   font-size: 13px;
   font-weight: 600;
-  z-index: 60;
+  z-index: 200;
   box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.5);
   max-width: calc(100% - 40px);
   text-align: center;

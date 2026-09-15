@@ -3,10 +3,16 @@ import { SCHEDULE } from "./data.js";
 import { markLoading, showToast } from "./state.js";
 import { initLikeButtonStatic, likeButtonHtml } from "./likes.js";
 import { postComment, subscribeComments } from "./comments.js";
+import { onNavChange, openOverlay, closeOverlay } from "./nav.js";
 
 // Unmuting one video should keep the rest unmuted too, not reset to
 // silent on every scroll — this is shared across every video in the feed.
 let sharedMuted = true;
+
+// The comment drawer belonging to whichever reel item currently has it
+// open, so a back-navigation can close just the drawer without touching
+// the reel underneath it.
+let openDrawerEl = null;
 
 export function initGallery() {
   const pillsEl = document.getElementById("gallery-day-pills");
@@ -199,9 +205,11 @@ export function initGallery() {
     let commentsUnsub = null;
     commentBtn.addEventListener("click", () => {
       drawer.hidden = false;
+      openDrawerEl = drawer;
+      openOverlay("reel", { drawer: true });
       if (!commentsUnsub) commentsUnsub = subscribeComments("gallery", item.id, drawer.querySelector(".reel-drawer-list"));
     });
-    drawer.querySelector(".reel-drawer-close").addEventListener("click", () => { drawer.hidden = true; });
+    drawer.querySelector(".reel-drawer-close").addEventListener("click", () => closeOverlay());
     const input = drawer.querySelector(".comment-input");
     const submit = drawer.querySelector(".comment-submit-btn");
     submit.addEventListener("click", async () => {
@@ -225,16 +233,28 @@ export function initGallery() {
     document.body.style.overflow = "hidden";
     const target = feedEl.children[startIndex];
     if (target) target.scrollIntoView({ block: "start" });
+    openOverlay("reel");
   }
 
   function closeReel() {
+    if (overlay.hidden) return;
     overlay.hidden = true;
     document.body.style.overflow = "";
     observer.disconnect();
     feedEl.querySelectorAll("video").forEach((v) => v.pause());
+    openDrawerEl = null;
   }
 
-  backBtn.addEventListener("click", closeReel);
+  onNavChange((navState) => {
+    if (navState.overlay !== "reel") {
+      closeReel();
+    } else if (!navState.drawer && openDrawerEl) {
+      openDrawerEl.hidden = true;
+      openDrawerEl = null;
+    }
+  });
+
+  backBtn.addEventListener("click", () => closeOverlay());
 
   // Horizontal drag-to-close, like swiping back out of a full feed.
   let touchStartX = null, touchStartY = null;
@@ -246,7 +266,7 @@ export function initGallery() {
     if (touchStartX === null) return;
     const dx = e.changedTouches[0].clientX - touchStartX;
     const dy = e.changedTouches[0].clientY - touchStartY;
-    if (Math.abs(dx) > 90 && Math.abs(dx) > Math.abs(dy) * 1.5) closeReel();
+    if (Math.abs(dx) > 90 && Math.abs(dx) > Math.abs(dy) * 1.5) closeOverlay();
     touchStartX = null;
   }, { passive: true });
 

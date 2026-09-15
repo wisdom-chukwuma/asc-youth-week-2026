@@ -1,6 +1,7 @@
 import { subscribeComments, postComment } from "./comments.js";
 import { initLikeButton } from "./likes.js";
 import { showToast } from "./state.js";
+import { onNavChange, openOverlay, closeOverlay } from "./nav.js";
 
 const PARENT_COLLECTION = { photo: "photos", gallery: "gallery" };
 
@@ -9,26 +10,30 @@ let likeUnsub = null;
 let currentParentId = null;
 let currentParentType = null;
 
+function closeLightbox() {
+  const lightbox = document.getElementById("photo-lightbox");
+  if (lightbox.hidden) return;
+  const video = document.getElementById("lightbox-video");
+  if (commentsUnsub) { commentsUnsub(); commentsUnsub = null; }
+  if (likeUnsub) { likeUnsub(); likeUnsub = null; }
+  video.pause();
+  video.removeAttribute("src");
+  video.load();
+  lightbox.hidden = true;
+  currentParentId = null;
+  currentParentType = null;
+}
+
 export function initLightbox() {
   const lightbox = document.getElementById("photo-lightbox");
-  const video = document.getElementById("lightbox-video");
   const input = document.getElementById("lightbox-comment-input");
   const submit = document.getElementById("lightbox-comment-submit");
   const closeBtn = document.getElementById("lightbox-close");
 
-  function close() {
-    if (commentsUnsub) { commentsUnsub(); commentsUnsub = null; }
-    if (likeUnsub) { likeUnsub(); likeUnsub = null; }
-    video.pause();
-    video.removeAttribute("src");
-    video.load();
-    lightbox.hidden = true;
-    currentParentId = null;
-    currentParentType = null;
-  }
+  onNavChange((navState) => { if (navState.overlay !== "lightbox") closeLightbox(); });
 
-  closeBtn.addEventListener("click", close);
-  lightbox.addEventListener("click", (e) => { if (e.target === lightbox) close(); });
+  closeBtn.addEventListener("click", () => closeOverlay());
+  lightbox.addEventListener("click", (e) => { if (e.target === lightbox) closeOverlay(); });
   submit.addEventListener("click", async () => {
     const text = input.value.trim();
     if (!text || !currentParentId) { if (!text) showToast("Write something first"); return; }
@@ -78,4 +83,5 @@ export function openLightbox(item) {
   likeUnsub = parentCollection ? initLikeButton(likeBtn, item.parentType, item.parentId, parentCollection) : null;
 
   lightbox.hidden = false;
+  openOverlay("lightbox");
 }

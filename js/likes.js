@@ -1,8 +1,35 @@
-import { db, doc, getDoc, setDoc, deleteDoc, updateDoc, onSnapshot, increment, serverTimestamp } from "./firebase-config.js";
+import { db, doc, getDoc, setDoc, deleteDoc, updateDoc, onSnapshot, increment, arrayUnion, serverTimestamp } from "./firebase-config.js";
 import { state, showToast } from "./state.js";
+import { POINTS, todaySchedule } from "./data.js";
 
 function likeDocId(parentType, parentId) {
   return `${parentType}_${parentId}_${state.uid}`;
+}
+
+// Points are only ever awarded the first time a person likes a given
+// item — unliking and re-liking it (or spamming the toggle) earns
+// nothing further. `likedForPoints` only ever grows, even though the
+// like itself can be removed, so it survives an unlike/relike cycle.
+async function awardLikePoints(parentType, parentId) {
+  if (!state.profile) return;
+  const key = `${parentType}_${parentId}`;
+  if (state.profile.likedForPoints?.includes(key)) return;
+  const day = todaySchedule()?.day || 0;
+  const dayCount = state.profile.likeCounts?.[day] || 0;
+  if (dayCount >= POINTS.likeDailyCap) return;
+
+  // Optimistic local guard so a fast burst of likes can't double-award
+  // before the profile snapshot echoes the write back.
+  state.profile.likedForPoints = [...(state.profile.likedForPoints || []), key];
+  state.profile.likeCounts = { ...(state.profile.likeCounts || {}), [day]: dayCount + 1 };
+  try {
+    await updateDoc(doc(db, "profiles", state.uid), {
+      points: increment(POINTS.like),
+      likedForPoints: arrayUnion(key),
+      [`likeCounts.${day}`]: increment(1)
+    });
+    showToast(`+${POINTS.like} pt — thanks for the love`);
+  } catch (e) { /* non-critical, the like itself already succeeded */ }
 }
 
 async function toggleLike(parentType, parentId, parentCollection) {
@@ -16,6 +43,7 @@ async function toggleLike(parentType, parentId, parentCollection) {
   }
   await setDoc(likeRef, { parentType, parentId, uid: state.uid, createdAt: serverTimestamp() });
   await updateDoc(parentRef, { likeCount: increment(1) });
+  awardLikePoints(parentType, parentId);
   return true;
 }
 

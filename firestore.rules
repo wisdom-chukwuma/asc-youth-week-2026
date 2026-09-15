@@ -36,6 +36,12 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    match /quizAnswers/{id} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
     // A like-count update may touch only that one field - keeps the
     // "everyone can nudge a counter" honor-system pattern (see
     // squadTotals above) from opening the door to editing anything else.

@@ -2,11 +2,15 @@ import {
   db, doc, runTransaction, serverTimestamp, increment, arrayUnion,
   collection, query, where, onSnapshot
 } from "./firebase-config.js";
-import { ENGAGE, POINTS, SCHEDULE, todaySchedule } from "./data.js";
+import { ENGAGE, QUIZ, POINTS, SCHEDULE, todaySchedule } from "./data.js";
 import { state, showToast, onProfileChange } from "./state.js";
 
 export function initEngage() {
   const dayLabel = document.getElementById("engage-day-label");
+  const quizCard = document.getElementById("engage-quiz-card");
+  const quizQ = document.getElementById("engage-quiz-question");
+  const quizOptionsEl = document.getElementById("engage-quiz-options");
+  const quizStatus = document.getElementById("engage-quiz-status");
   const pollQ = document.getElementById("engage-poll-question");
   const pollOptionsEl = document.getElementById("engage-poll-options");
   const pollResultsEl = document.getElementById("engage-poll-results");
@@ -25,6 +29,7 @@ export function initEngage() {
 
     if (!day || !ENGAGE[day]) {
       dayLabel.textContent = "No live session today";
+      quizCard.hidden = true;
       pollQ.textContent = "Check back on an event day — 6pm most nights.";
       pollOptionsEl.innerHTML = "";
       pollOptionsEl.hidden = false;
@@ -40,6 +45,15 @@ export function initEngage() {
     const content = ENGAGE[day];
     const dayMeta = SCHEDULE.find((d) => d.day === day);
     dayLabel.textContent = `Day ${day} · ${dayMeta.label}`;
+
+    const quizContent = QUIZ[day];
+    quizCard.hidden = !quizContent;
+    if (quizContent) {
+      quizQ.textContent = quizContent.question;
+      const answered = state.profile.quizDays?.includes(day);
+      renderQuizOptions(day, quizContent, answered, state.profile.quizPicks?.[day]);
+    }
+
     pollQ.textContent = content.poll;
     reflectionQ.textContent = content.reflection;
     reflectionInput.hidden = false;
@@ -61,6 +75,51 @@ export function initEngage() {
       reflectionInput.disabled = false;
       reflectionSubmit.disabled = false;
       reflectionStatus.textContent = "";
+    }
+  }
+
+  function renderQuizOptions(day, content, answered, pickedIndex) {
+    quizOptionsEl.innerHTML = "";
+    content.options.forEach((opt, i) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "poll-option-btn quiz-option-btn";
+      btn.textContent = opt;
+      if (answered) {
+        btn.disabled = true;
+        if (i === content.correctIndex) btn.classList.add("is-correct");
+        else if (i === pickedIndex) btn.classList.add("is-wrong");
+      } else {
+        btn.addEventListener("click", () => submitQuiz(day, i, content));
+      }
+      quizOptionsEl.appendChild(btn);
+    });
+    quizStatus.textContent = !answered
+      ? "One try — pick your answer."
+      : pickedIndex === content.correctIndex
+        ? `Correct! +${POINTS.quiz} pts`
+        : "Good try — here's the right answer.";
+  }
+
+  async function submitQuiz(day, optionIndex, content) {
+    if (!state.uid || !state.profile || state.profile.quizDays?.includes(day)) return;
+    const answerRef = doc(db, "quizAnswers", `d${day}_${state.uid}`);
+    const profileRef = doc(db, "profiles", state.uid);
+    const correct = optionIndex === content.correctIndex;
+    [...quizOptionsEl.children].forEach((b) => { b.disabled = true; });
+    try {
+      await runTransaction(db, async (tx) => {
+        const snap = await tx.get(answerRef);
+        if (snap.exists()) return;
+        tx.set(answerRef, { day, uid: state.uid, optionIndex, correct, createdAt: serverTimestamp() });
+        const updates = { quizDays: arrayUnion(day), [`quizPicks.${day}`]: optionIndex };
+        if (correct) updates.points = increment(POINTS.quiz);
+        tx.update(profileRef, updates);
+      });
+      showToast(correct ? `+${POINTS.quiz} pts — correct!` : "Not quite — see the right answer");
+    } catch (e) {
+      showToast("Couldn't submit — try again");
+      [...quizOptionsEl.children].forEach((b) => { b.disabled = false; });
     }
   }
 
