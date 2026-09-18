@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Downloads — Worship The King</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+<style>
+  :root {
+    --bg-deep: #150a2e;
+    --gold: #f4b942;
+    --gold-soft: #e8c874;
+    --ink: #f5eefc;
+    --ink-dim: #b8a9d9;
+    --glass-border: rgba(244, 185, 66, 0.22);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg-deep);
+    background-image:
+      radial-gradient(ellipse 90% 40% at 50% 0%, rgba(122,43,110,0.45) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 40% at 100% 20%, rgba(58,20,112,0.4) 0%, transparent 60%);
+    color: var(--ink);
+    font-family: Manrope, -apple-system, sans-serif;
+    padding: 20px 18px calc(40px + env(safe-area-inset-bottom));
+  }
+  header { text-align: center; margin-bottom: 22px; }
+  .eyebrow { display: block; font-size: 11.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 6px; }
+  h1 { font-family: Cinzel, Georgia, serif; font-weight: 900; font-size: 26px; margin: 0 0 6px 0; color: var(--gold); }
+  .sub { font-size: 13px; color: var(--ink-dim); margin: 0; }
+
+  .pills { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 16px; scrollbar-width: none; }
+  .pills::-webkit-scrollbar { display: none; }
+  .pill {
+    flex-shrink: 0; background: rgba(255,255,255,0.06); border: 1px solid var(--glass-border);
+    border-radius: 999px; padding: 8px 16px; font-size: 13px; font-weight: 700; color: var(--ink-dim);
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+  }
+  .pill.is-active { background: linear-gradient(135deg, var(--gold-soft), var(--gold)); color: #1c0f36; border-color: transparent; }
+  .pill:disabled { opacity: 0.35; cursor: default; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .tile { position: relative; aspect-ratio: 3/4; border-radius: 14px; overflow: hidden; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); }
+  .tile.is-loading {
+    background-image: linear-gradient(100deg, rgba(255,255,255,0.02) 30%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.02) 70%);
+    background-size: 220% 100%;
+    animation: tile-shimmer 1.6s ease-in-out infinite;
+  }
+  @keyframes tile-shimmer { 0% { background-position: 140% 0; } 100% { background-position: -80% 0; } }
+  .tile img, .tile video { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.35s ease; }
+  .tile img.is-loaded, .tile video.is-loaded { opacity: 1; }
+  .tile-play {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    font-size: 24px; color: rgba(255,255,255,0.92); filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); pointer-events: none;
+  }
+  .dl-btn {
+    position: absolute; top: 6px; right: 6px; width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(0,0,0,0.55); border: none; color: #fff; font-size: 14px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .dl-btn:disabled { opacity: 0.5; }
+  .dl-btn.is-done { background: rgba(125, 222, 146, 0.85); color: #0c3016; }
+
+  .empty { text-align: center; color: var(--ink-dim); font-size: 13px; padding: 40px 0; }
+  .toast {
+    position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+    background: rgba(20,10,40,0.95); border: 1px solid var(--glass-border); color: var(--ink);
+    padding: 11px 18px; border-radius: 999px; font-size: 13px; font-weight: 600; z-index: 50;
+    box-shadow: 0 10px 30px -8px rgba(0,0,0,0.5); max-width: calc(100% - 40px); text-align: center;
+  }
+  .toast[hidden] { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="eyebrow">Worship The King · Youth Week 2026</span>
+  <h1>Downloads</h1>
+  <p class="sub">Tap the download icon on any photo or video to save it.</p>
+</header>
+
+<div id="pills" class="pills"></div>
+<div id="grid" class="grid"></div>
+<p id="empty" class="empty" hidden>No media posted for this day yet.</p>
+
+<div id="toast" class="toast" hidden></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import { getFirestore, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAwJXyrfFUsGdpDOsjoZ4hJLtHqgHgvs8U",
+  authDomain: "asc-youth-week-2026.firebaseapp.com",
+  projectId: "asc-youth-week-2026",
+  storageBucket: "asc-youth-week-2026.firebasestorage.app",
+  messagingSenderId: "330796924622",
+  appId: "1:330796924622:web:4c77832ad5fa20c3491a9f"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const SCHEDULE_DAYS = [1, 2, 3, 4, 5, 6];
+
+const pillsEl = document.getElementById("pills");
+const gridEl = document.getElementById("grid");
+const emptyEl = document.getElementById("empty");
+const toastEl = document.getElementById("toast");
+
+function showToast(msg, ms = 2600) {
+  toastEl.textContent = msg;
+  toastEl.hidden = false;
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => { toastEl.hidden = true; }, ms);
+}
+
+async function downloadMedia(url, filename, btn) {
+  if (btn) btn.disabled = true;
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error("fetch failed");
+    const blob = await resp.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 4000);
+    if (btn) { btn.classList.add("is-done"); btn.innerHTML = '<i class="ph-fill ph-check"></i>'; }
+    showToast("Saved");
+  } catch (e) {
+    showToast("Couldn't download — try again");
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+function downloadFilename(item) {
+  const ext = item.type === "video" ? "mp4" : "jpg";
+  return `worship-the-king-day${item.day}-${item.id}.${ext}`;
+}
+
+let itemsByDay = {};
+let selectedDay = null;
+
+function renderPills() {
+  pillsEl.innerHTML = "";
+  SCHEDULE_DAYS.forEach((day) => {
+    const count = (itemsByDay[day] || []).length;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "pill" + (day === selectedDay ? " is-active" : "");
+    btn.textContent = `Day ${day}`;
+    btn.disabled = count === 0;
+    btn.addEventListener("click", () => { selectedDay = day; renderPills(); renderGrid(); });
+    pillsEl.appendChild(btn);
+  });
+}
+
+function renderGrid() {
+  gridEl.innerHTML = "";
+  const items = itemsByDay[selectedDay] || [];
+  emptyEl.hidden = items.length > 0;
+  items.forEach((item) => {
+    const tile = document.createElement("div");
+    tile.className = "tile is-loading";
+
+    const media = item.type === "video" ? document.createElement("video") : document.createElement("img");
+    const markLoaded = () => { tile.classList.remove("is-loading"); media.classList.add("is-loaded"); };
+    media.addEventListener(item.type === "video" ? "loadeddata" : "load", markLoaded, { once: true });
+    media.addEventListener("error", markLoaded, { once: true });
+    if (item.type === "video") {
+      media.muted = true;
+      media.preload = "metadata";
+      media.addEventListener("loadedmetadata", () => { media.currentTime = 0.1; }, { once: true });
+    } else {
+      media.loading = "lazy";
+    }
+    media.src = item.url;
+    tile.appendChild(media);
+
+    if (item.type === "video") {
+      const play = document.createElement("i");
+      play.className = "ph-fill ph-play-circle tile-play";
+      tile.appendChild(play);
+    }
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "dl-btn";
+    btn.setAttribute("aria-label", "Download");
+    btn.innerHTML = '<i class="ph ph-download-simple"></i>';
+    btn.addEventListener("click", () => downloadMedia(item.url, downloadFilename(item), btn));
+    tile.appendChild(btn);
+
+    gridEl.appendChild(tile);
+  });
+}
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) return;
+  const q = query(collection(db, "gallery"), orderBy("createdAt", "desc"), limit(500));
+  onSnapshot(q, (snap) => {
+    itemsByDay = {};
+    snap.forEach((docSnap) => {
+      const data = docSnap.data();
+      const day = data.day;
+      if (!itemsByDay[day]) itemsByDay[day] = [];
+      itemsByDay[day].push({ id: docSnap.id, ...data });
+    });
+    if (selectedDay === null || !(selectedDay in itemsByDay)) {
+      const daysWithContent = Object.keys(itemsByDay).map(Number).sort((a, b) => b - a);
+      selectedDay = daysWithContent[0] ?? 1;
+    }
+    renderPills();
+    renderGrid();
+  });
+});
+signInAnonymously(auth).catch(() => showToast("Couldn't connect — check your internet"));
+</script>
+</body>
+</html>
