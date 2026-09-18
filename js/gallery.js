@@ -14,6 +14,36 @@ let sharedMuted = true;
 // the reel underneath it.
 let openDrawerEl = null;
 
+// Fetches the media as a blob and saves it via a same-origin blob: URL —
+// a plain <a download> pointing straight at the Storage URL gets ignored
+// by most browsers for a cross-origin link (they just navigate to it
+// instead of saving), so this is what actually makes "Download" reliable.
+async function downloadMedia(url, filename, btn) {
+  if (btn) btn.disabled = true;
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error("fetch failed");
+    const blob = await resp.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 4000);
+  } catch (e) {
+    showToast("Couldn't download — try again");
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+function downloadFilename(item) {
+  const ext = item.type === "video" ? "mp4" : "jpg";
+  return `worship-the-king-day${item.day}-${item.id}.${ext}`;
+}
+
 export function initGallery() {
   const pillsEl = document.getElementById("gallery-day-pills");
   const gridEl = document.getElementById("gallery-grid");
@@ -80,6 +110,18 @@ export function initGallery() {
         playIcon.className = "ph-fill ph-play-circle gallery-grid-play";
         tile.appendChild(playIcon);
       }
+
+      const downloadBtn = document.createElement("button");
+      downloadBtn.type = "button";
+      downloadBtn.className = "gallery-grid-download";
+      downloadBtn.setAttribute("aria-label", "Download");
+      downloadBtn.innerHTML = '<i class="ph ph-download-simple"></i>';
+      downloadBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        downloadMedia(item.url, downloadFilename(item), downloadBtn);
+      });
+      tile.appendChild(downloadBtn);
+
       tile.addEventListener("click", () => openReel(items, index));
       gridEl.appendChild(tile);
     });
@@ -180,6 +222,14 @@ export function initGallery() {
     commentBtn.className = "reel-comment-btn";
     commentBtn.innerHTML = '<i class="ph ph-chat-circle reel-comment-icon"></i>';
     actions.appendChild(commentBtn);
+
+    const downloadBtn = document.createElement("button");
+    downloadBtn.type = "button";
+    downloadBtn.className = "reel-download-btn";
+    downloadBtn.setAttribute("aria-label", "Download");
+    downloadBtn.innerHTML = '<i class="ph ph-download-simple reel-download-icon"></i>';
+    downloadBtn.addEventListener("click", () => downloadMedia(item.url, downloadFilename(item), downloadBtn));
+    actions.appendChild(downloadBtn);
 
     bottom.appendChild(actions);
     el.appendChild(bottom);

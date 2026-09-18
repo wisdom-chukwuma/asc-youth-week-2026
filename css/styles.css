@@ -781,6 +781,23 @@ button, input, textarea {
   filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
   pointer-events: none;
 }
+.gallery-grid-download {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.gallery-grid-download:disabled { opacity: 0.5; }
 .gallery-pill {
   flex-shrink: 0;
   background: rgba(255, 255, 255, 0.06);
@@ -940,7 +957,8 @@ button, input, textarea {
   gap: 20px;
 }
 .reel-actions .like-btn,
-.reel-actions .reel-comment-btn {
+.reel-actions .reel-comment-btn,
+.reel-actions .reel-download-btn {
   flex-direction: column;
   gap: 2px;
   background: none;
@@ -952,8 +970,10 @@ button, input, textarea {
   cursor: pointer;
   text-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
+.reel-actions .reel-download-btn:disabled { opacity: 0.5; }
 .reel-actions .like-icon { font-size: 24px; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); }
-.reel-comment-icon { font-size: 24px; line-height: 1; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); }
+.reel-comment-icon,
+.reel-download-icon { font-size: 24px; line-height: 1; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); }
 
 .reel-comment-drawer {
   position: absolute;
